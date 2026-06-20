@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://c8storydialog9a"]
+[gd_scene format=3 uid="uid://bgel6xob83vke"]
 
-[ext_resource type="Script" uid="uid://b1storydialog0a" path="res://scripts/ui/story_dialog.gd" id="1_story"]
+[ext_resource type="Script" uid="uid://conr5ch843tug" path="res://scripts/ui/story_dialog.gd" id="1_story"]
 [ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
@@ -20,23 +20,11 @@ border_width_bottom = 2
 border_color = Color(0.301961, 0.301961, 0.345098, 1)
 anti_aliasing = false
 
-[node name="StoryDialog" type="CanvasLayer"]
+[node name="StoryDialog" type="CanvasLayer" unique_id=1709381848]
 layer = 20
 script = ExtResource("1_story")
-pages = PackedStringArray("[center]OVLÁDÁNÍ
 
-←  →     Pohyb
-MEZERNÍK    Skok
-Q       Útok
-E       Akce[/center]", "[center]Jsi Tove.
-
-Probouzíš se v zemi,
-kterou neznáš.[/center]", "[center]Žádné vzpomínky.
-Žádné odpovědi.
-
-Jen cesta vpřed.[/center]")
-
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="ColorRect" parent="." unique_id=1944497280]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -44,34 +32,34 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.541176)
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="." unique_id=2055668362]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Frame" type="PanelContainer" parent="Center"]
+[node name="Frame" type="PanelContainer" parent="Center" unique_id=618459614]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 
-[node name="Inner" type="PanelContainer" parent="Center/Frame"]
+[node name="Inner" type="PanelContainer" parent="Center/Frame" unique_id=1320146364]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_inner")
 
-[node name="Margin" type="MarginContainer" parent="Center/Frame/Inner"]
+[node name="Margin" type="MarginContainer" parent="Center/Frame/Inner" unique_id=437037298]
 layout_mode = 2
 theme_override_constants/margin_left = 22
 theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 22
 theme_override_constants/margin_bottom = 18
 
-[node name="VBox" type="VBoxContainer" parent="Center/Frame/Inner/Margin"]
+[node name="VBox" type="VBoxContainer" parent="Center/Frame/Inner/Margin" unique_id=1080032464]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Text" type="RichTextLabel" parent="Center/Frame/Inner/Margin/VBox"]
+[node name="Text" type="RichTextLabel" parent="Center/Frame/Inner/Margin/VBox" unique_id=861210399]
 custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.803922, 0.803922, 0.843137, 1)
@@ -81,10 +69,12 @@ bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="Hint" type="Label" parent="Center/Frame/Inner/Margin/VBox"]
+[node name="Hint" type="Label" parent="Center/Frame/Inner/Margin/VBox" unique_id=1979632785]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.607843, 0.998039, 0.276923, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
-text = "▸ DÁL  [MEZERNÍK]"
+text = "▶ ZAČÍT  [MEZERNÍK]"
 horizontal_alignment = 1

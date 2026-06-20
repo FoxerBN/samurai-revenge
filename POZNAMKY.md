@@ -15,9 +15,9 @@ assets/
   music/      Silent Forest.mp3
   sounds/     coin.wav, chest.mp3
   sprites/
-    Character/   animačné sheety hráča + slime-npc.png
-    environment/ stromy (Dark/Golden/Green/Red/Yellow)
-    coin.png, chest.png, Tiles.png, Summer8.png, Background.png   ← voľne ležia
+	Character/   animačné sheety hráča + slime-npc.png
+	environment/ stromy (Dark/Golden/Green/Red/Yellow)
+	coin.png, chest.png, Tiles.png, Summer8.png, Background.png   ← voľne ležia
 scenes/   enemies/ items/ levels/ player/ ui/
 scripts/  enemies/ items/ levels/ ui/ + game_manager.gd
 ```
@@ -153,17 +153,17 @@ extends Area2D
 var _unlocked := false
 
 func _ready():
-    GameManager.all_quests_completed.connect(_unlock)
-    body_entered.connect(_on_body_entered)
+	GameManager.all_quests_completed.connect(_unlock)
+	body_entered.connect(_on_body_entered)
 
 func _unlock():
-    _unlocked = true
-    # tu zapni vizuál/označenie, že sa dá prejsť ďalej
+	_unlocked = true
+	# tu zapni vizuál/označenie, že sa dá prejsť ďalej
 
 func _on_body_entered(body):
-    if _unlocked and body.is_in_group("player"):
-        GameManager.reset_game()          # vyčisti mince/questy pre ďalší level
-        get_tree().change_scene_to_file(next_level)
+	if _unlocked and body.is_in_group("player"):
+		GameManager.reset_game()          # vyčisti mince/questy pre ďalší level
+		get_tree().change_scene_to_file(next_level)
 ```
 V každom leveli umiestniš `LevelExit` na koniec mapy a v inšpektore nastavíš
 `next_level` na cestu k ďalšej scéne. Quest typ (coins/kill) určuje len to, čím

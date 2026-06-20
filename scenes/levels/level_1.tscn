@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://k4xis1l4pag1" path="res://scripts/levels/level_1.gd" id="1_wtwp4"]
 [ext_resource type="Texture2D" uid="uid://cdv7rbbtsymwi" path="res://assets/sprites/Tiles.png" id="2_2vj2h"]
 [ext_resource type="PackedScene" uid="uid://ecyl3vp6fu5" path="res://scenes/player/player.tscn" id="2_y0acb"]
-[ext_resource type="PackedScene" uid="uid://c8storydialog9a" path="res://scenes/ui/story_dialog.tscn" id="4_oc4kc"]
+[ext_resource type="PackedScene" uid="uid://bgel6xob83vke" path="res://scenes/ui/story_dialog.tscn" id="4_oc4kc"]
 [ext_resource type="PackedScene" uid="uid://b4qotq5qvtfgq" path="res://scenes/items/coin.tscn" id="4_x42e6"]
 [ext_resource type="PackedScene" uid="uid://iog8mc1efdpd" path="res://scenes/ui/hud.tscn" id="5_6761a"]
 [ext_resource type="Texture2D" uid="uid://c8ldjdfa7n823" path="res://assets/sprites/environment/Dark-Tree.png" id="5_iav0o"]
