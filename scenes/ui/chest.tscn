@@ -58,14 +58,13 @@ radius = 26.019224
 script = ExtResource("1_25bmr")
 
 [node name="Label" type="Label" parent="." unique_id=181436095]
-visible = false
-offset_left = -26.0
-offset_top = -27.0
-offset_right = 14.0
-offset_bottom = -4.0
+offset_left = -20.0
+offset_top = -22.0
+offset_right = 19.0
+offset_bottom = 1.0
 theme_override_fonts/font = ExtResource("3_hqyqw")
 theme_override_font_sizes/font_size = 5
-text = "E - Open"
+text = "E Open"
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1092998265]
 stream = ExtResource("2_hqyqw")

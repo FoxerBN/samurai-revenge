@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://en2716m6wvql" path="res://scripts/ui/hud.gd" id="1_0mwgc"]
 [ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_hqnrr"]
 [ext_resource type="Texture2D" uid="uid://dsi3p3cmj3xb3" path="res://assets/sprites/coin.png" id="3_bo48s"]
+[ext_resource type="Texture2D" uid="uid://i48ibbex58ix" path="res://assets/sprites/Character/slime-npc.png" id="4_enemy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bo48s"]
 content_margin_left = 5.0
@@ -136,12 +137,20 @@ theme_override_constants/separation = 5
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Control/PanelContainer/HBoxContainer/IconContainer" unique_id=113398724]
+[node name="CoinIcon" type="AnimatedSprite2D" parent="Control/PanelContainer/HBoxContainer/IconContainer" unique_id=113398724]
 position = Vector2(11.25, 11.25)
 scale = Vector2(1.7031249, 1.7031252)
 sprite_frames = SubResource("SpriteFrames_gonto")
 animation = &"coin_icon"
 autoplay = "coin_icon"
+
+[node name="EnemyIcon" type="Sprite2D" parent="Control/PanelContainer/HBoxContainer/IconContainer"]
+visible = false
+position = Vector2(12.5, 12.5)
+scale = Vector2(0.78, 0.78)
+texture = ExtResource("4_enemy")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 32)
 
 [node name="Label" type="Label" parent="Control/PanelContainer/HBoxContainer" unique_id=105211291]
 layout_mode = 2
