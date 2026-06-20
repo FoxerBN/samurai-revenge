@@ -1,0 +1,79 @@
+[gd_scene load_steps=12 format=3 uid="uid://bdq1yeadynitx"]
+
+[ext_resource type="Script" uid="uid://dcv0spy40mihq" path="res://scripts/enemies/frog.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://i48ibbex58ix" path="res://assets/sprites/Character/slime-npc.png" id="1_lohqt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kosjv"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d72w0"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5p7qk"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jksd0"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_noff5"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c1ia"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07b2c"]
+atlas = ExtResource("1_lohqt")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2a0kb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kosjv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d72w0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5p7qk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jksd0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_noff5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5c1ia")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07b2c")
+}],
+"loop": true,
+"name": &"frog_move",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cs1ye"]
+radius = 6.0
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1731346180]
+collision_layer = 2
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=926714968]
+sprite_frames = SubResource("SpriteFrames_2a0kb")
+animation = &"frog_move"
+autoplay = "frog_move"
+frame = 2
+frame_progress = 0.3546574
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2054300378]
+position = Vector2(-5, 9)
+shape = SubResource("CircleShape2D_cs1ye")
