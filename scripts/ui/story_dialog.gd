@@ -3,20 +3,21 @@ extends CanvasLayer
 ## Pixel-art dialógové okno.
 ## Zobrazuje postupne stránky textu (ovládanie, útržky príbehu).
 ## Počas zobrazenia je hra pozastavená (get_tree().paused = true).
-## Medzerníkom / Enterom sa prepína na ďalšiu stránku.
+## Posúva sa tlačidlom (myš) alebo MEDZERNÍKOM / Enterom.
 ## Po poslednej stránke vyšle signál `finished` a sám sa odstráni.
 
 signal finished
 
 ## Predvolený obsah (čeština). Drží sa priamo v skripte, aby sa nestratil pri
 ## ukladaní scény v editore. Pre konkrétny level sa dá prepísať cez `pages`.
+## Ovládanie má kľúče zarovnané do stĺpca (PressStart2P je monospace).
 const DEFAULT_PAGES: PackedStringArray = [
-	"[center]OVLÁDÁNÍ
+	"[center]OVLÁDÁNÍ[/center]
 
-←  →     Pohyb
-MEZERNÍK    Skok
-Q       Útok
-E       Akce[/center]",
+← →       Pohyb
+MEZERNÍK  Skok
+Q         Útok
+E         Akce",
 	"[center]Jsi Tove.
 
 Probouzíš se v zemi,
@@ -33,7 +34,7 @@ Jen cesta vpřed.[/center]",
 
 @onready var _frame: Control = $Center/Frame
 @onready var _text: RichTextLabel = $Center/Frame/Inner/Margin/VBox/Text
-@onready var _hint: Label = $Center/Frame/Inner/Margin/VBox/Hint
+@onready var _button: Button = $Center/Frame/Inner/Margin/VBox/NextButton
 
 var _active_pages: PackedStringArray = []
 var _index: int = 0
@@ -42,8 +43,8 @@ func _ready() -> void:
 	# Dialóg musí bežať, aj keď je zvyšok hry pozastavený.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_active_pages = pages if not pages.is_empty() else DEFAULT_PAGES
+	_button.pressed.connect(_advance)
 	get_tree().paused = true
-	_blink_hint()
 	_show_page(0)
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -59,7 +60,7 @@ func _show_page(i: int) -> void:
 		return
 	_text.text = _active_pages[i]
 	# Posledná stránka spustí hru, ostatné len posunú ďalej.
-	_hint.text = "▶ ZAČÍT  [MEZERNÍK]" if i >= _active_pages.size() - 1 else "▶ DÁL  [MEZERNÍK]"
+	_button.text = "ZAČÍT" if i >= _active_pages.size() - 1 else "DÁL  ▶"
 	# Krátky fade-in pre plynulý prechod medzi stránkami.
 	_frame.modulate.a = 0.0
 	create_tween().tween_property(_frame, "modulate:a", 1.0, 0.25)
@@ -75,10 +76,3 @@ func _close() -> void:
 	get_tree().paused = false
 	finished.emit()
 	queue_free()
-
-# --- EFEKTY ---
-
-func _blink_hint() -> void:
-	var tween := create_tween().set_loops()
-	tween.tween_property(_hint, "modulate:a", 0.25, 0.5)
-	tween.tween_property(_hint, "modulate:a", 1.0, 0.5)

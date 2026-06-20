@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bd42jpkhyur5p" path="res://assets/sprites/Character/Idle/Idle-Sheet.png" id="5_0owmy"]
 [ext_resource type="Texture2D" uid="uid://blnauwrawy1oj" path="res://assets/sprites/Character/Jumlp-All/Jump-All-Sheet.png" id="5_h17s1"]
 [ext_resource type="Texture2D" uid="uid://dwlceruikb5sv" path="res://assets/sprites/Character/Run/Run-Sheet.png" id="6_je7p5"]
+[ext_resource type="AudioStreamMP3" uid="uid://bswordswipe01a" path="res://assets/sounds/sword swipe.mp3" id="7_sword"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fm80t"]
 atlas = ExtResource("2_0owmy")
@@ -422,3 +423,6 @@ position_smoothing_speed = 10.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea" unique_id=586417780]
 position = Vector2(6.25, 0)
 shape = SubResource("RectangleShape2D_0owmy")
+
+[node name="SwordSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_sword")
