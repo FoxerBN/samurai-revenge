@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bgel6xob83vke"]
+[gd_scene load_steps=6 format=3 uid="uid://bgel6xob83vke"]
 
 [ext_resource type="Script" uid="uid://conr5ch843tug" path="res://scripts/ui/story_dialog.gd" id="1_story"]
 [ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_font"]
@@ -20,50 +20,13 @@ border_width_bottom = 2
 border_color = Color(0.301961, 0.301961, 0.345098, 1)
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-content_margin_left = 16.0
-content_margin_top = 8.0
-content_margin_right = 16.0
-content_margin_bottom = 8.0
-bg_color = Color(0.2, 0.2, 0.243137, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.552941, 0.552941, 0.623529, 1)
-anti_aliasing = false
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_btn"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-content_margin_left = 16.0
-content_margin_top = 8.0
-content_margin_right = 16.0
-content_margin_bottom = 8.0
-bg_color = Color(0.305882, 0.305882, 0.372549, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.784314, 0.784314, 0.866667, 1)
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-content_margin_left = 16.0
-content_margin_top = 8.0
-content_margin_right = 16.0
-content_margin_bottom = 8.0
-bg_color = Color(0.129412, 0.129412, 0.160784, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.552941, 0.552941, 0.623529, 1)
-anti_aliasing = false
-
-[node name="StoryDialog" type="CanvasLayer" unique_id=1709381848]
+[node name="StoryDialog" type="CanvasLayer"]
 layer = 20
 script = ExtResource("1_story")
 
-[node name="Dim" type="ColorRect" parent="." unique_id=1944497280]
+[node name="Dim" type="ColorRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -71,34 +34,34 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.541176)
 
-[node name="Center" type="CenterContainer" parent="." unique_id=2055668362]
+[node name="Center" type="CenterContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Frame" type="PanelContainer" parent="Center" unique_id=618459614]
+[node name="Box" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Frame" type="PanelContainer" parent="Center/Box"]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 
-[node name="Inner" type="PanelContainer" parent="Center/Frame" unique_id=1320146364]
+[node name="Inner" type="PanelContainer" parent="Center/Box/Frame"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_inner")
 
-[node name="Margin" type="MarginContainer" parent="Center/Frame/Inner" unique_id=437037298]
+[node name="Margin" type="MarginContainer" parent="Center/Box/Frame/Inner"]
 layout_mode = 2
 theme_override_constants/margin_left = 22
 theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 22
 theme_override_constants/margin_bottom = 18
 
-[node name="VBox" type="VBoxContainer" parent="Center/Frame/Inner/Margin" unique_id=1080032464]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Text" type="RichTextLabel" parent="Center/Frame/Inner/Margin/VBox" unique_id=861210399]
+[node name="Text" type="RichTextLabel" parent="Center/Box/Frame/Inner/Margin"]
 custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.803922, 0.803922, 0.843137, 1)
@@ -108,18 +71,19 @@ bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="NextButton" type="Button" parent="Center/Frame/Inner/Margin/VBox" unique_id=1979632785]
+[node name="NextButton" type="Button" parent="Center/Box"]
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_colors/font_hover_color = Color(0.607843, 0.998039, 0.276923, 1)
+theme_override_colors/font_pressed_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-text = "ZAČÍT"
+theme_override_styles/normal = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_btn")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_btn")
+text = "START"

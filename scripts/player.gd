@@ -12,14 +12,12 @@ const DEAD_COLLISION_SIZE = Vector2(42, 10)
 const MAP_CENTER = Vector2(576, 324)        # stred mapy (náhľad pred štartom)
 const OVERVIEW_ZOOM = Vector2(0.7, 0.7)
 const GAMEPLAY_ZOOM = Vector2(1.3, 1.3)
-const CAMERA_INTRO_TIME = 1.2               # dĺžka presunu kamery stred -> hráč
-const SWORD_SWIPE_GAP = 0.13                # rozostup dvoch švihov pri útoku
+const SWORD_SWIPE_GAP = 0.2                  # rozostup dvoch švihov pri útoku na mieste
 
 # --- PREMENNÉ ---
 var is_attacking = false
 var game_started = false
 var is_dead = false
-var _was_running = false                    # na prehratie zvuku behu len raz
 
 # --- ODKAZY NA UZLY ---
 @onready var anim = $AnimatedSprite
@@ -77,27 +75,26 @@ func _update_visuals():
 		
 	if not is_attacking:
 		if not is_on_floor():
-			_was_running = false
 			anim.play("jump" if velocity.y < 0 else "fall")
 		elif velocity.x != 0:
-			# Zvuk behu prehráme len raz – pri začatí behu.
-			if not _was_running:
-				sword_sfx.play()
-				_was_running = true
 			anim.play("run")
 		else:
-			_was_running = false
 			anim.play("idle")
 
 func attack():
 	is_attacking = true
-	_play_sword_swipe(2)   # pri machnutí mečom dva švihy za sebou
-	anim.play("run_attack" if velocity.x != 0 else "attack")
+	# Útok na mieste = dva švihy (2 zvuky), útok počas behu = jeden švih (1 zvuk).
+	if velocity.x != 0:
+		anim.play("run_attack")
+		_play_sword_swipe(1)
+	else:
+		anim.play("attack")
+		_play_sword_swipe(2)
 	await anim.animation_finished
 	is_attacking = false
 
 func _play_sword_swipe(times: int) -> void:
-	""" Prehrá zvuk švihu mečom `times`-krát rýchlo za sebou. """
+	""" Prehrá zvuk švihu mečom `times`-krát za sebou (len počas seknutia). """
 	for i in times:
 		sword_sfx.play()
 		if i < times - 1:
@@ -125,19 +122,26 @@ func start_game():
 	game_started = true
 	if not camera: return
 
-	# Plynulý presun kamery zo stredu mapy na hráča + priblíženie.
-	var tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween.set_parallel(true)
-	tween.tween_property(camera, "global_position", global_position, CAMERA_INTRO_TIME)
-	tween.tween_property(camera, "zoom", GAMEPLAY_ZOOM, CAMERA_INTRO_TIME)
-	tween.set_parallel(false)
-	tween.tween_callback(_attach_camera_to_player)
+	# Kamera prestane byť „voľná" a začne sledovať hráča. Zapneme herné limity,
+	# takže cieľ je hneď orezaný na hraciu plochu (žiadny myk za textúry).
+	# Vďaka zapnutému position_smoothing kamera plynulo prejde zo stredu mapy
+	# na hráča a zároveň sa priblíži (zoom).
+	camera.position_smoothing_enabled = true
+	camera.top_level = false
+	camera.position = Vector2.ZERO
+	camera.limit_left = 0
+	camera.limit_top = -10000000
+	camera.limit_right = 1152
+	camera.limit_bottom = 700
+
+	create_tween().tween_property(camera, "zoom", GAMEPLAY_ZOOM, 1.0)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _setup_initial_camera():
-	""" Pred štartom: kamera ukazuje stred mapy (náhľad). """
+	""" Pred štartom: kamera ukazuje stred mapy (oddialený náhľad). """
 	if not camera: return
 	camera.top_level = true
-	camera.position_smoothing_enabled = false
+	camera.position_smoothing_enabled = true
 	camera.global_position = MAP_CENTER
 	camera.zoom = OVERVIEW_ZOOM
 	# Bez limitov, nech sa dá ukázať stred mapy aj pri oddialení.
@@ -145,17 +149,8 @@ func _setup_initial_camera():
 	camera.limit_top = -10000000
 	camera.limit_right = 10000000
 	camera.limit_bottom = 10000000
-
-func _attach_camera_to_player():
-	""" Po presune kamera začne sledovať hráča a zapnú sa herné limity. """
-	if not camera: return
-	camera.top_level = false
-	camera.position = Vector2.ZERO
-	camera.position_smoothing_enabled = true
-	camera.limit_left = 0
-	camera.limit_top = -10000000
-	camera.limit_right = 1152
-	camera.limit_bottom = 700
+	# Náhľad na stred ukáž okamžite (glide nech nastane až pri štarte na hráča).
+	camera.reset_smoothing()
 
 func die():
 	if is_dead: return

@@ -2,13 +2,13 @@
 
 importer="mp3"
 type="AudioStreamMP3"
-uid="uid://bswordswipe01a"
-path="res://.godot/imported/sword swipe.mp3-generated.mp3str"
+uid="uid://coego2x8drm6c"
+path="res://.godot/imported/sword swipe.mp3-b691b19d687476a2ec5a4bc57a4381b5.mp3str"
 
 [deps]
 
 source_file="res://assets/sounds/sword swipe.mp3"
-dest_files=["res://.godot/imported/sword swipe.mp3-generated.mp3str"]
+dest_files=["res://.godot/imported/sword swipe.mp3-b691b19d687476a2ec5a4bc57a4381b5.mp3str"]
 
 [params]
 

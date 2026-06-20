@@ -1,46 +1,46 @@
 extends CanvasLayer
 
-## Pixel-art dialógové okno.
-## Zobrazuje postupne stránky textu (ovládanie, útržky príbehu).
-## Počas zobrazenia je hra pozastavená (get_tree().paused = true).
-## Posúva sa tlačidlom (myš) alebo MEDZERNÍKOM / Enterom.
-## Po poslednej stránke vyšle signál `finished` a sám sa odstráni.
+## Pixel-art intro / story dialog.
+## Shows pages of text (controls, story bits) one by one.
+## The game is paused while it is visible (get_tree().paused = true).
+## Advance with the button (mouse) or SPACE / Enter.
+## After the last page it emits `finished` and frees itself.
 
 signal finished
 
-## Predvolený obsah (čeština). Drží sa priamo v skripte, aby sa nestratil pri
-## ukladaní scény v editore. Pre konkrétny level sa dá prepísať cez `pages`.
-## Ovládanie má kľúče zarovnané do stĺpca (PressStart2P je monospace).
+## Default content. Kept in the script so it cannot be lost when the scene is
+## saved in the editor. Per-level it can be overridden via `pages`.
+## Controls keys are padded into a column (PressStart2P is monospace).
 const DEFAULT_PAGES: PackedStringArray = [
-	"[center]OVLÁDÁNÍ[/center]
+	"[center]CONTROLS[/center]
 
-← →       Pohyb
-MEZERNÍK  Skok
-Q         Útok
-E         Akce",
-	"[center]Jsi Tove.
+← →       Move
+SPACE     Jump
+Q         Attack
+E         Action",
+	"[center]You are Tove.
 
-Probouzíš se v zemi,
-kterou neznáš.[/center]",
-	"[center]Žádné vzpomínky.
-Žádné odpovědi.
+You wake in a land
+you do not know.[/center]",
+	"[center]No memories.
+No answers.
 
-Jen cesta vpřed.[/center]",
+Only the path ahead.[/center]",
 ]
 
-## Voliteľné prepísanie stránok per-level (Inšpektor). Ak je prázdne,
-## použije sa DEFAULT_PAGES. Podporuje BBCode (napr. [center]).
+## Optional per-level override (Inspector). If empty, DEFAULT_PAGES is used.
+## Supports BBCode (e.g. [center]).
 @export var pages: PackedStringArray = []
 
-@onready var _frame: Control = $Center/Frame
-@onready var _text: RichTextLabel = $Center/Frame/Inner/Margin/VBox/Text
-@onready var _button: Button = $Center/Frame/Inner/Margin/VBox/NextButton
+@onready var _frame: Control = $Center/Box/Frame
+@onready var _text: RichTextLabel = $Center/Box/Frame/Inner/Margin/Text
+@onready var _button: Button = $Center/Box/NextButton
 
 var _active_pages: PackedStringArray = []
 var _index: int = 0
 
 func _ready() -> void:
-	# Dialóg musí bežať, aj keď je zvyšok hry pozastavený.
+	# The dialog must keep running while the rest of the game is paused.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_active_pages = pages if not pages.is_empty() else DEFAULT_PAGES
 	_button.pressed.connect(_advance)
@@ -52,16 +52,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		_advance()
 
-# --- LOGIKA STRÁNOK ---
+# --- PAGE LOGIC ---
 
 func _show_page(i: int) -> void:
 	if _active_pages.is_empty():
 		_close()
 		return
 	_text.text = _active_pages[i]
-	# Posledná stránka spustí hru, ostatné len posunú ďalej.
-	_button.text = "ZAČÍT" if i >= _active_pages.size() - 1 else "DÁL  ▶"
-	# Krátky fade-in pre plynulý prechod medzi stránkami.
+	# Last page starts the game, the others just go on.
+	_button.text = "START" if i >= _active_pages.size() - 1 else "NEXT  ▶"
+	# Short fade-in for a smooth transition between pages.
 	_frame.modulate.a = 0.0
 	create_tween().tween_property(_frame, "modulate:a", 1.0, 0.25)
 
