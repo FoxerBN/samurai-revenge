@@ -13,8 +13,8 @@ signal finished
 @export var pages: PackedStringArray = []
 
 @onready var _frame: Control = $Center/Frame
-@onready var _text: RichTextLabel = $Center/Frame/Margin/VBox/Text
-@onready var _hint: Label = $Center/Frame/Margin/VBox/Hint
+@onready var _text: RichTextLabel = $Center/Frame/Inner/Margin/VBox/Text
+@onready var _hint: Label = $Center/Frame/Inner/Margin/VBox/Hint
 
 var _index: int = 0
 

@@ -74,9 +74,9 @@ theme_override_constants/separation = 20
 [node name="Text" type="RichTextLabel" parent="Center/Frame/Inner/Margin/VBox"]
 custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
-theme_override_colors/default_color = Color(0.901961, 0.901961, 0.92549, 1)
+theme_override_colors/default_color = Color(0.803922, 0.803922, 0.843137, 1)
 theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_font_sizes/normal_font_size = 12
+theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
