@@ -79,10 +79,7 @@ position = Vector2(1172, 324)
 shape = SubResource("RectangleShape2D_g2h2n")
 
 [node name="StoryDialog" parent="." unique_id=272430545 instance=ExtResource("2_g2h2n")]
-pages = PackedStringArray("[center]LEVEL 2
-
-The frogs block your path.
-Defeat them all.[/center]")
+pages = ["The frogs block your path.Defeat them all.[/center]\")"]
 
 [node name="Portal" parent="." unique_id=578555819 instance=ExtResource("4_fiq81")]
 position = Vector2(18, 590)

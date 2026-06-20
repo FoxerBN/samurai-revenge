@@ -30754,7 +30754,6 @@ visible = false
 position = Vector2(1126, 617)
 next_level = "res://scenes/levels/level_2.tscn"
 
-[node name="Hint" parent="." instance=ExtResource("19_hint")]
-message = "Portal opened"
+[node name="Hint" parent="." unique_id=1411789967 instance=ExtResource("19_hint")]
 
 [connection signal="finished" from="StoryDialog" to="Player" method="start_game"]

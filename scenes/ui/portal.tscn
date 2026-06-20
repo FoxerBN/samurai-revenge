@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://bad5ehg5lmpb7"]
+[gd_scene format=3 uid="uid://bad5ehg5lmpb7"]
 
 [ext_resource type="Texture2D" uid="uid://ccorp561sxh65" path="res://assets/sprites/Dimensional_Portal.png" id="1_tehrx"]
-[ext_resource type="Script" uid="uid://cportalscript01a" path="res://scripts/ui/portal.gd" id="2_portal"]
+[ext_resource type="Script" uid="uid://dt33pvjyj8brc" path="res://scripts/ui/portal.gd" id="2_portal"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_npuvw"]
 atlas = ExtResource("1_tehrx")
@@ -60,8 +60,11 @@ radius = 2.0
 script = ExtResource("2_portal")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1270252789]
+position = Vector2(1.0000002, -2)
+scale = Vector2(1.15625, 1.125)
 sprite_frames = SubResource("SpriteFrames_u6y0l")
 animation = &"portal"
+autoplay = "portal"
 frame_progress = 0.57307017
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1021262123]
