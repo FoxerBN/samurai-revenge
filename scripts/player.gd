@@ -98,12 +98,8 @@ func _handle_interaction():
 # --- MANAŽMENT HRY A KAMERY ---
 
 func start_game():
-	""" Spustí hru a aktivuje kameru. """
+	""" Spustí hru a aktivuje kameru. Volá sa zo StoryDialog.finished. """
 	game_started = true
-	
-	# Aktivácia HUDu pre ovládanie
-	var controls = get_tree().get_nodes_in_group("controls_hud")
-	if controls.size() > 0: controls[0].show_controls()
 
 	if camera:
 		camera.top_level = false
@@ -124,11 +120,6 @@ func _setup_initial_camera():
 		camera.zoom = Vector2(0.7, 0.7)
 		camera.limit_left = -10000000
 		camera.limit_bottom = 10000000
-
-func _on_button_pressed():
-	start_game()
-	var canvas = get_tree().root.find_child("CanvasLayer", true, false)
-	if canvas: canvas.hide()
 
 func die():
 	if is_dead: return

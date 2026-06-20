@@ -1,0 +1,90 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8storydialog9a"]
+
+[ext_resource type="Script" uid="uid://b1storydialog0a" path="res://scripts/ui/story_dialog.gd" id="1_story"]
+[ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.580392, 0.580392, 0.643137, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inner"]
+bg_color = Color(0.152941, 0.152941, 0.184314, 0.972549)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.301961, 0.301961, 0.345098, 1)
+anti_aliasing = false
+
+[node name="StoryDialog" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_story")
+pages = PackedStringArray("[center]OVLÁDÁNÍ
+
+←  →     Pohyb
+MEZERNÍK    Skok
+Q       Útok
+E       Akce[/center]", "[center]Jsi Tove.
+
+Probouzíš se v zemi,
+kterou neznáš.[/center]", "[center]Žádné vzpomínky.
+Žádné odpovědi.
+
+Jen cesta vpřed.[/center]")
+
+[node name="Dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.541176)
+
+[node name="Center" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Frame" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+
+[node name="Inner" type="PanelContainer" parent="Center/Frame"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_inner")
+
+[node name="Margin" type="MarginContainer" parent="Center/Frame/Inner"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="Center/Frame/Inner/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Text" type="RichTextLabel" parent="Center/Frame/Inner/Margin/VBox"]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.901961, 0.901961, 0.92549, 1)
+theme_override_fonts/normal_font = ExtResource("2_font")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Hint" type="Label" parent="Center/Frame/Inner/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.607843, 0.998039, 0.276923, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 8
+text = "▸ DÁL  [MEZERNÍK]"
+horizontal_alignment = 1
