@@ -1,0 +1,161 @@
+[gd_scene format=3 uid="uid://4wxyhnyb6eer"]
+
+[ext_resource type="Texture2D" uid="uid://byw71dnpnjxp0" path="res://assets/sprites/environment/double_jump_potion.png" id="1_wwbyb"]
+[ext_resource type="Script" uid="uid://b2os0udlycyi4" path="res://scripts/items/double_jump_potion.gd" id="2_wwbyb"]
+[ext_resource type="AudioStream" uid="uid://2pdmmotejo4i" path="res://assets/sounds/potin.mp3" id="3_wwbyb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0p04"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w4lcf"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ure3k"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4cm2w"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xie3e"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vlnef"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a1xhv"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4tuf6"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aqqfr"]
+atlas = ExtResource("1_wwbyb")
+region = Rect2(128, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tu0sg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0p04")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w4lcf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ure3k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4cm2w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xie3e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vlnef")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a1xhv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4tuf6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aqqfr")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 12.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dwkmk"]
+radius = 4.472136
+
+[sub_resource type="Animation" id="Animation_xp734"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_wrt2m"]
+resource_name = "pickup"
+length = 0.53333336
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.53333336),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -30)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.53333336),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ekanj"]
+_data = {
+&"RESET": SubResource("Animation_xp734"),
+&"pickup": SubResource("Animation_wrt2m")
+}
+
+[node name="JumpPotion" type="Area2D" unique_id=1352312532]
+script = ExtResource("2_wwbyb")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2035329353]
+sprite_frames = SubResource("SpriteFrames_tu0sg")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.71088105
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=587676889]
+shape = SubResource("CircleShape2D_dwkmk")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=587676890]
+stream = ExtResource("3_wwbyb")
+volume_db = 13.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1684046800]
+libraries/ = SubResource("AnimationLibrary_ekanj")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

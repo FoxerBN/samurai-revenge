@@ -21,8 +21,13 @@ var game_started = false
 var is_dead = false
 var is_sprinting = false                     # drží Shift a pohybuje sa
 
+# Dvojskok (z lektvaru): kým beží časovač, vo vzduchu môžeš skočiť ešte raz.
+var double_jump_time_left = 0.0              # koľko sekúnd je dvojskok ešte aktívny
+var double_jump_used = false                 # už si dvojskok v tomto výskoku použil?
+
 # --- ODKAZY NA UZLY ---
 @onready var anim = $AnimatedSprite
+@onready var aura = $AnimatedSprite2D            # vizuálna aura počas dvojskoku
 @onready var camera = $Camera2D
 @onready var body_collision = $CollisionShape2D
 # Dva prehrávače, aby sa pri dvojseku zvuky neprerušovali (striedame ich).
@@ -33,13 +38,30 @@ var is_sprinting = false                     # drží Shift a pohybuje sa
 func _ready():
 	add_to_group("player")
 	_setup_initial_camera()
+	aura.play("aura")            # aura sa stále prehráva, len ju skrývame/zobrazujeme
+
+	# Správanie na šikmých plochách (svahoch):
+	floor_snap_length = 32.0           # drží postavu pri zemi pri schádzaní (nehrá sa "fall")
+	floor_constant_speed = true        # rovnaká rýchlosť hore aj dole (žiadne zasekávanie)
+	floor_stop_on_slope = true         # na svahu nestojíme a nekĺžeme sa dole
+	floor_max_angle = deg_to_rad(55)   # aj strmší svah berie ako podlahu, nie ako stenu
+	floor_block_on_wall = false        # nezasekne sa o hranu svahu/dlaždice pri stúpaní
 
 func _physics_process(delta: float) -> void:
 	if not game_started: return
 		
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
-	
+
+	# Odpočítavanie platnosti dvojskoku (lektvar trvá len pár sekúnd).
+	if double_jump_time_left > 0.0:
+		double_jump_time_left = max(0.0, double_jump_time_left - delta)
+
+	# Aura je viditeľná presne počas platnosti dvojskoku.
+	aura.visible = double_jump_time_left > 0.0
+	if aura.visible:
+		aura.flip_h = anim.flip_h            # aura sa otáča spolu s postavou
+
 	if is_dead:
 		move_and_slide()
 		return
@@ -51,9 +73,17 @@ func _physics_process(delta: float) -> void:
 # --- LOGIKA VSTUPU A POHYBU ---
 
 func _handle_input():
-	# Skok
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
+	# Po dopade na zem sa dvojskok znova nabije.
+	if is_on_floor():
+		double_jump_used = false
+
+	# Skok: zo zeme normálne, vo vzduchu jeden dvojskok (ak je lektvar aktívny).
+	if Input.is_action_just_pressed("ui_accept"):
+		if is_on_floor():
+			velocity.y = JUMP_VELOCITY
+		elif double_jump_time_left > 0.0 and not double_jump_used:
+			velocity.y = JUMP_VELOCITY
+			double_jump_used = true
 		
 	# Horizontálny pohyb (so sprintom na Shift)
 	var direction = Input.get_axis("ui_left", "ui_right")
@@ -120,6 +150,13 @@ func _handle_interaction():
 			elif area.get_parent().has_method("interact"):
 				area.get_parent().interact()
 				return
+
+# --- POWER-UPY ---
+
+func grant_double_jump(duration: float = 5.0) -> void:
+	""" Zapne (alebo obnoví) dvojskok na `duration` sekúnd.
+	Volá sa z lektvaru pri zobratí. """
+	double_jump_time_left = duration
 
 # --- MANAŽMENT HRY A KAMERY ---
 
