@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://chintscene01a"]
+[gd_scene format=3 uid="uid://chintscene01a"]
 
 [ext_resource type="Script" uid="uid://chintscript01a" path="res://scripts/ui/hint.gd" id="1_hint"]
 [ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_font"]

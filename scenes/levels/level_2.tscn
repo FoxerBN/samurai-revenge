@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://fe447lkg6w5f"]
 
 [ext_resource type="Texture2D" uid="uid://cmwesn3d4wbxv" path="res://assets/sprites/Summer3.png" id="1_j2425"]
-[ext_resource type="Script" uid="uid://clevel2script01a" path="res://scripts/levels/level_2.gd" id="1_lvl2"]
+[ext_resource type="Script" uid="uid://b4t5kbt55n70g" path="res://scripts/levels/level_2.gd" id="1_lvl2"]
 [ext_resource type="PackedScene" uid="uid://bgel6xob83vke" path="res://scenes/ui/story_dialog.tscn" id="2_g2h2n"]
 [ext_resource type="TileSet" uid="uid://clt2ulke4mg7l" path="res://resources/world_tile_set.tres" id="2_ra442"]
 [ext_resource type="PackedScene" uid="uid://bad5ehg5lmpb7" path="res://scenes/ui/portal.tscn" id="4_fiq81"]
@@ -79,6 +79,10 @@ position = Vector2(1172, 324)
 shape = SubResource("RectangleShape2D_g2h2n")
 
 [node name="StoryDialog" parent="." unique_id=272430545 instance=ExtResource("2_g2h2n")]
+pages = PackedStringArray("[center]LEVEL 2
+
+The frogs block your path.
+Defeat them all.[/center]")
 
 [node name="Portal" parent="." unique_id=578555819 instance=ExtResource("4_fiq81")]
 position = Vector2(18, 590)
@@ -88,11 +92,11 @@ start_open = true
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Portal" unique_id=898466980]
 libraries/ = SubResource("AnimationLibrary_ibugp")
 
-[node name="Hud" parent="." instance=ExtResource("6_hud")]
+[node name="Hud" parent="." unique_id=1298953941 instance=ExtResource("6_hud")]
 
-[node name="QuestUI" parent="." instance=ExtResource("7_quest")]
+[node name="QuestUI" parent="." unique_id=2006683170 instance=ExtResource("7_quest")]
 
-[node name="Player" parent="." instance=ExtResource("5_player")]
-position = Vector2(40, 555)
+[node name="Player" parent="." unique_id=885601255 instance=ExtResource("5_player")]
+position = Vector2(40, 594)
 
 [connection signal="finished" from="StoryDialog" to="Player" method="start_game"]
