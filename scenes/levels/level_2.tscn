@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://b4t5kbt55n70g" path="res://scripts/levels/level_2.gd" id="1_lvl2"]
 [ext_resource type="PackedScene" uid="uid://bgel6xob83vke" path="res://scenes/ui/story_dialog.tscn" id="2_g2h2n"]
 [ext_resource type="TileSet" uid="uid://clt2ulke4mg7l" path="res://resources/world_tile_set.tres" id="2_ra442"]
+[ext_resource type="AudioStream" uid="uid://cunc8a0psakkm" path="res://assets/music/14 - Tales of Firelight Town.mp3" id="3_3p04p"]
 [ext_resource type="PackedScene" uid="uid://bad5ehg5lmpb7" path="res://scenes/ui/portal.tscn" id="4_fiq81"]
 [ext_resource type="PackedScene" uid="uid://ecyl3vp6fu5" path="res://scenes/player/player.tscn" id="5_player"]
 [ext_resource type="PackedScene" uid="uid://iog8mc1efdpd" path="res://scenes/ui/hud.tscn" id="6_hud"]
@@ -60,6 +61,10 @@ position = Vector2(586, 376.00003)
 scale = Vector2(0.5672743, 0.5821759)
 texture = ExtResource("1_j2425")
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1684976727]
+stream = ExtResource("3_3p04p")
+autoplay = true
+
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1317876861]
 tile_map_data = PackedByteArray("AAAAACUAAQALAA4AAAAAACYAAQAKAAwAAAABACUAAQAMAA4AAAABACYAAQALAAwAAAACACUAAQAMAA4AAAACACYAAQALAAwAAAADACUAAQAMAA4AAAADACYAAQALAAwAAAAEACUAAQAMAA4AAAAEACYAAQALAAwAAAAFACUAAQAMAA4AAAAFACYAAQALAAwAAAAGACUAAQAMAA4AAAAGACYAAQALAAwAAAAHACUAAQAMAA4AAAAHACYAAQALAAwAAAAIACUAAQAMAA4AAAAIACYAAQALAAwAAAAJACUAAQAMAA4AAAAJACYAAQALAAwAAAAKACUAAQAMAA4AAAAKACYAAQALAAwAAAALACUAAQAMAA4AAAALACYAAQAMAAwAAAAAACcAAQAKAA0AAAABACcAAQALAA0AAAACACcAAQALAA0AAAADACcAAQALAA0AAAAEACcAAQALAA0AAAAFACcAAQALAA0AAAAGACcAAQALAA0AAAAHACcAAQALAA0AAAAIACcAAQALAA0AAAAJACcAAQALAA0AAAAKACcAAQALAA0AAAALACcAAQAMAA0AAAA=")
 tile_set = ExtResource("2_ra442")
@@ -79,7 +84,7 @@ position = Vector2(1172, 324)
 shape = SubResource("RectangleShape2D_g2h2n")
 
 [node name="StoryDialog" parent="." unique_id=272430545 instance=ExtResource("2_g2h2n")]
-pages = ["The frogs block your path.Defeat them all.[/center]\")"]
+pages = ["[center]The frogs block your path.Defeat them all.[/center]"]
 
 [node name="Portal" parent="." unique_id=578555819 instance=ExtResource("4_fiq81")]
 position = Vector2(18, 590)

@@ -1,185 +1,137 @@
-# Samurai Revenge — poznámky, review a návrhy
+# Návod: útok zabíja žaby (krok po kroku)
 
-Tento súbor zhŕňa stav projektu po upratovaní a obsahuje návrhy, ktoré sa
-**zatiaľ neimplementovali** (kolízne vrstvy, systém postupu do ďalšieho levela).
+Cieľ: hráč útokom (Q) zabije žabu; po zabití sa pripočíta do „kill" questu
+(`GameManager.notify_enemy_killed()` už existuje a `level_2.gd` pridáva quest
+`enemy_kill`).
 
----
-
-## 1. Štruktúra priečinkov — hodnotenie
-
-Aktuálne (po vyčistení):
-
-```
-assets/
-  fonts/      PressStart2P
-  music/      Silent Forest.mp3
-  sounds/     coin.wav, chest.mp3
-  sprites/
-	Character/   animačné sheety hráča + slime-npc.png
-	environment/ stromy (Dark/Golden/Green/Red/Yellow)
-	coin.png, chest.png, Tiles.png, Summer8.png, Background.png   ← voľne ležia
-scenes/   enemies/ items/ levels/ player/ ui/
-scripts/  enemies/ items/ levels/ ui/ + game_manager.gd
-```
-
-**Čo je dobré:** rozdelenie `scenes/` a `scripts/` podľa rovnakých kategórií je
-prehľadné a konzistentné. `assets/` má rozumné podpriečinky.
-
-**Čo som vyčistil:**
-- `recording.avi` (10 MB Movie Maker nahrávka) — zmazané + pridané do `.gitignore`
-- `chest88.png`, `Interface-...Crown.ico` — nepoužité, zmazané
-- všetky `*.gif` (Aseprite náhľady, Godot ich nepoužíva) — zmazané
-- `controls.tscn/.gd` — nahradené novým `story_dialog`
-
-**Odporúčania (sprav v Godot editore — kvôli `.import` referenciám neťahaj
-súbory mimo editora!):**
-- Voľné sprity v `assets/sprites/` presunúť do podpriečinkov:
-  `items/` (coin, chest), `tiles/` (Tiles), `backgrounds/` (Summer8, Background).
-- `Jumlp-All/` → preklep, premenuj na `Jump-All/`. Skontroluj aj nepoužité
-  sheety `Jump-Start/`, `Jump/` (hráč ich teraz nepoužíva) — buď zapoj do
-  animácií skoku, alebo zmaž.
-- `.aseprite` zdrojové súbory som **nechal** (sú to editovateľné originály).
-  Pokojne ich presuň do samostatného `art_source/` mimo `assets/`, aby sa
-  nepliedli s tým, čo hra reálne načítava.
-- `Background.png` už nie je nikde použitý (skrytý sprite som odstránil z levelu).
-  Ak ho neplánuješ použiť, môžeš zmazať `Background.png` + `.import`.
+Princíp: hráč dostane **útočný hitbox** (Area2D). Aby sa hitbox aj jeho kolízia
+**preklápali podľa toho, kam hráč pozerá**, dáme ho pod **Pivot node** (Node2D)
+a ten len preklopíme (`scale.x = -1`). Všetko pod pivotom sa preklopí s ním.
 
 ---
 
-## 2. Scény a logika — review
+## A) Útočný hitbox na hráčovi (Pivot node)
 
-**Tok hry:** `level_1.tscn` je hlavná scéna → `StoryDialog` pauzne hru a ukáže
-intro → po dohraní vyšle signál `finished` → `Player.start_game()` spustí hru.
+V `scenes/player/player.tscn`:
 
-**Globálny stav:** `GameManager` (autoload) drží mince a questy a komunikuje cez
-signály (`coins_changed`, `quest_updated`). HUD aj QuestUI len počúvajú signály —
-**toto je správny vzor** (loose coupling, žiadne tvrdé referencie medzi UI a logikou).
+1. Na uzol **Player** pridaj `Node2D` → premenuj na **AttackPivot**, pozícia `(0, 0)`.
+2. Pod `AttackPivot` pridaj `Area2D` → premenuj na **Hitbox**.
+3. Pod `Hitbox` pridaj `CollisionShape2D`:
+   - Shape: `RectangleShape2D`, veľkosť napr. `24 x 24`.
+   - Position: posuň **doprava pred hráča**, napr. `x = 20, y = 0`
+     (to je dosah meča, keď hráč pozerá doprava).
+4. Klikni na **Hitbox** a v Inšpektore nastav:
+   - **Monitoring = On**, **Monitorable = Off**
+   - **Collision → Layer**: vypni úplne (žiadna vrstva).
+   - **Collision → Mask**: zapni iba vrstvu, na ktorej sú nepriatelia
+     (žaba je na **vrstve 2** → zaškrtni políčko 2).
 
-**Komunikácia medzi objektmi je riešená dobre:**
-- mince/nepriatelia identifikujú hráča cez skupinu `player` (`is_in_group`),
-  nie cez tvrdú cestu — čisté a znovupoužiteľné;
-- truhla aj minca volajú `GameManager` priamo cez autoload — OK.
-
-**Čo by som zlepšil (nie kritické):**
-- `frog.gd` zatiaľ **nemá smrť** — útok hráča žabu nezabije. Pre „kill" levely to
-  bude treba (viď bod 4).
-- `player.gd _handle_interaction()` používa `find_child("InteractionArea", ...)`
-  každý stlačok E — lepšie uložiť referenciu cez `@onready`.
-- Mená nodov v leveli som upratal: `Environment`, `Environment2`, `base`,
-  `Enemies`, `Coins`, `Coin1..4` (predtým `Node`, `enemy`, `Area2D`…).
-- TileSet dáta sú vložené priamo v `level_1.tscn` (preto má ~390 KB). Pre
-  čistotu a zdieľanie medzi levelmi zváž **uloženie TileSetu ako `.tres`**
-  (v editore: TileSet → Save As) do `resources/` a referencovať ho.
+> Tip: položku otestuj tak, že v editore vidíš modrý obdĺžnik pred hráčom.
 
 ---
 
-## 3. Kolízne vrstvy (layers / masks) — review
+## B) Preklápanie pivotu podľa smeru (player.gd)
 
-**Aktuálny stav:**
-
-| Objekt            | layer | mask  | poznámka |
-|-------------------|-------|-------|----------|
-| Tilemapy (svet)   | 1     | 1     | kolízia definovaná v TileSet physics layer |
-| Hráč              | 1     | 1+2   | je na **rovnakej vrstve ako svet** |
-| Žaba (frog)       | 2     | 1     | deteguje hráča, lebo hráč je na vrstve 1 |
-| Minca (Area2D)    | 1     | 1     | deteguje telo hráča |
-| Truhla + areas    | 1     | 1     | |
-
-**Funguje to**, ale má to jeden „smell": **hráč a svet zdieľajú vrstvu 1**.
-Žaba „náhodou" deteguje hráča len preto, že hráč sedí na vrstve sveta.
-Je to krehké — keby si hráča presunul na vlastnú vrstvu, žaba ho prestane vidieť.
-
-**Odporúčaná čistá schéma** (nastav v *Project Settings → Layer Names → 2D Physics*
-a potom v jednotlivých scénach zaškrtni vrstvy/masky — rob v editore a hneď testuj):
-
-```
-Vrstva 1: World         (tilemapy, neviditeľné steny)
-Vrstva 2: Player
-Vrstva 3: Enemy
-Vrstva 4: Collectible   (mince — len Area2D)
-Vrstva 5: Interactable  (truhla)
-```
-
-| Objekt              | layer        | mask                  |
-|---------------------|--------------|-----------------------|
-| Tilemapy / steny    | World        | —                     |
-| Hráč (body)         | Player       | World + Enemy         |
-| Hráč InteractionArea| —            | Interactable          |
-| Žaba                | Enemy        | World + Player        |
-| Minca (Area2D)      | Collectible  | Player                |
-| Truhla (body)       | World        | —                     |
-| Truhla InteractionArea | Interactable | Player             |
-
-Pozn.: kolíziu **svetových dlaždíc** nemeníš na node, ale v **TileSet → Physics
-Layer** (tam je nastavená vrstva sveta).
-
----
-
-## 4. Návrh: systém postupu do ďalšieho levela (zatiaľ neimplementované)
-
-Cieľ: dva typy levelov — **zbieranie mincí** a **zabíjanie NPC**. Po splnení
-questu sa sprístupní **výstupná zóna** (`Area2D`), ktorá hráča prenesie do ďalšej
-scény. Žiadne ukladanie.
-
-### 4.1. Doplniť do `GameManager`
+Pridaj odkazy hore k ostatným `@onready`:
 ```gdscript
-signal all_quests_completed          # vyšle sa, keď sú hotové VŠETKY questy
-
-func _update_quest_progress(...):
-    ...
-    if q.current >= q.target:
-        q.completed = true
-        quest_updated.emit(i)
-        if _all_done():
-            all_quests_completed.emit()
-
-func _all_done() -> bool:
-    for q in active_quests:
-        if not q.completed: return false
-    return not active_quests.is_empty()
+@onready var attack_pivot = $AttackPivot
+@onready var attack_hitbox = $AttackPivot/Hitbox
 ```
 
-### 4.2. Pre „kill" levely zabezpečiť smrť nepriateľa
-V `frog.gd` pridať `die()` (vyvolá ho útok hráča), ktoré na konci zavolá
-`GameManager.notify_enemy_killed()` — tá funkcia už v `GameManager` existuje.
-Quest sa pridá ako `add_quest("enemy_kill", 3, "Zabij žáby")`.
-
-### 4.3. Nová scéna `LevelExit` (znovupoužiteľná pre oba typy)
-`scenes/levels/level_exit.tscn` = `Area2D` + `CollisionShape2D` (+ voliteľne
-sprite dverí/portálu). Skript:
+V `_update_visuals()` tam, kde sa nastavuje `anim.flip_h`, preklop aj pivot:
 ```gdscript
-extends Area2D
-@export_file("*.tscn") var next_level: String
-var _unlocked := false
+func _update_visuals():
+	if velocity.x != 0:
+		var facing_left = velocity.x < 0
+		anim.flip_h = facing_left
+		attack_pivot.scale.x = -1 if facing_left else 1
+	...
+```
+Keď pozeráš doľava, `scale.x = -1` preklopí hitbox (x=20 sa stane x=-20) –
+kolízia ide automaticky s ním.
+
+---
+
+## C) Útok spôsobí zásah (player.gd)
+
+Uprav `attack()` tak, aby po rozbehnutí švihu skontroloval, čo je v hitboxe:
+```gdscript
+func attack():
+	is_attacking = true
+	if velocity.x != 0:
+		anim.play("run_attack")
+		_play_sword_swipe(1)
+	else:
+		anim.play("attack")
+		_play_sword_swipe(2)
+
+	# počkaj, kým je meč v strede švihu, a zasiahni
+	await get_tree().create_timer(0.15).timeout
+	_deal_damage()
+
+	await anim.animation_finished
+	is_attacking = false
+
+func _deal_damage():
+	for body in attack_hitbox.get_overlapping_bodies():
+		if body.is_in_group("enemy") and body.has_method("die"):
+			body.die()
+```
+
+---
+
+## D) Žabe pridaj smrť (frog.gd)
+
+Pridaj príznak a do `_ready()` zaradenie do skupiny `enemy`:
+```gdscript
+var is_dead := false
 
 func _ready():
-	GameManager.all_quests_completed.connect(_unlock)
-	body_entered.connect(_on_body_entered)
-
-func _unlock():
-	_unlocked = true
-	# tu zapni vizuál/označenie, že sa dá prejsť ďalej
-
-func _on_body_entered(body):
-	if _unlocked and body.is_in_group("player"):
-		GameManager.reset_game()          # vyčisti mince/questy pre ďalší level
-		get_tree().change_scene_to_file(next_level)
+	add_to_group("enemy")
+	start_position = global_position
+	_update_flip()
+	if anim:
+		anim.play("frog_move")
 ```
-V každom leveli umiestniš `LevelExit` na koniec mapy a v inšpektore nastavíš
-`next_level` na cestu k ďalšej scéne. Quest typ (coins/kill) určuje len to, čím
-sa zóna „odomkne" — logika prechodu je rovnaká.
 
-### 4.4. Tok
+Na začiatok `_physics_process()` daj poistku (mŕtva žaba nech nič nerobí):
+```gdscript
+func _physics_process(delta: float) -> void:
+	if is_dead:
+		return
+	...
 ```
-level → quest (coins | kill) → all_quests_completed → odomkne LevelExit
-      → hráč vojde do zóny → change_scene_to_file(next_level)
+
+Pridaj funkciu `die()`:
+```gdscript
+func die():
+	if is_dead:
+		return
+	is_dead = true
+	GameManager.notify_enemy_killed()
+	# (voliteľne: tu spusti animáciu smrti a await pred zmiznutím)
+	queue_free()
 ```
 
 ---
 
-## 5. Intro / príbeh (hotové)
-- Nahradený čierny low-visibility kontajner **sivým pixel-art panelom** s
-  hranatými okrajmi (`story_dialog.tscn`), prispôsobuje sa dĺžke textu.
-- Hra **čaká** (pauza), **MEDZERNÍK** posúva stránky: ovládanie → príbeh (2 strany)
-  → ZAČÍT. Texty sú per-level konfigurovateľné v inšpektore (`pages`).
-- Príbeh preložený do češtiny.
+## E) Daj žaby do levelu 2
+
+1. Otvor `scenes/levels/level_2.tscn`.
+2. Pretiahni `scenes/enemies/frog.tscn` do scény (alebo Instantiate Child Scene).
+3. Polož aspoň **3 žaby** na zem (quest je `enemy_kill`, target 3).
+4. Každej podľa potreby nastav `patrol_distance` v Inšpektore.
+
+---
+
+## F) Kontrola prepojenia (collision vrstvy / skupiny)
+
+- Žaba: `collision_layer = 2` (už má), v `_ready()` `add_to_group("enemy")`.
+- Hráčov Hitbox: Layer = žiadna, Mask = 2 (vidí žaby).
+- Hráč je v skupine `player`, žaba v skupine `enemy`.
+
+Hotovo: Q → hitbox pred hráčom → ak je v ňom žaba, zavolá sa `die()` →
+`notify_enemy_killed()` posunie kill quest. Po 3 zabitiach sa splní cieľ levelu.
+
+> Pozn.: žaba zabije hráča dotykom (jej telo). Hitbox má dosah pred hráčom,
+> takže útoč skôr, než sa k tebe žaba dostane.

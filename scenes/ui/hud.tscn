@@ -108,6 +108,63 @@ animations = [{
 "speed": 6.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gonto"]
+atlas = ExtResource("4_enemy")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwdlq"]
+atlas = ExtResource("4_enemy")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6xly"]
+atlas = ExtResource("4_enemy")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_we3sy"]
+atlas = ExtResource("4_enemy")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65nxt"]
+atlas = ExtResource("4_enemy")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_el1dq"]
+atlas = ExtResource("4_enemy")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gmc6u"]
+atlas = ExtResource("4_enemy")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1e6lo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gonto")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cwdlq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6xly")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_we3sy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_65nxt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_el1dq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gmc6u")
+}],
+"loop": true,
+"name": &"enemy_icon",
+"speed": 5.0
+}]
+
 [node name="Hud" type="CanvasLayer" unique_id=328636459]
 script = ExtResource("1_0mwgc")
 
@@ -144,13 +201,13 @@ sprite_frames = SubResource("SpriteFrames_gonto")
 animation = &"coin_icon"
 autoplay = "coin_icon"
 
-[node name="EnemyIcon" type="Sprite2D" parent="Control/PanelContainer/HBoxContainer/IconContainer"]
+[node name="EnemyIcon" type="AnimatedSprite2D" parent="Control/PanelContainer/HBoxContainer/IconContainer" unique_id=1856698567]
 visible = false
-position = Vector2(12.5, 12.5)
-scale = Vector2(0.78, 0.78)
-texture = ExtResource("4_enemy")
-region_enabled = true
-region_rect = Rect2(0, 0, 32, 32)
+position = Vector2(11.250004, 2.5)
+scale = Vector2(0.8587499, 0.8587499)
+sprite_frames = SubResource("SpriteFrames_1e6lo")
+animation = &"enemy_icon"
+autoplay = "enemy_icon"
 
 [node name="Label" type="Label" parent="Control/PanelContainer/HBoxContainer" unique_id=105211291]
 layout_mode = 2
