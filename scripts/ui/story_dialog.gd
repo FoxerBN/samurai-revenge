@@ -15,6 +15,7 @@ const DEFAULT_PAGES: PackedStringArray = [
 	"[center]CONTROLS[/center]
 
 ← →       Move
+SHIFT     Sprint
 SPACE     Jump
 Q         Attack
 E         Action",

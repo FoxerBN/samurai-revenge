@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 # --- KONŠTANTY ---
 const SPEED = 130.0
+const SPRINT_SPEED = 185.0                   # rýchlosť pri držaní Shiftu
 const JUMP_VELOCITY = -400.0
 const GRAVITY = 980.0
 const DEAD_SPRITE_POSITION = Vector2(0, 8)
@@ -18,6 +19,7 @@ const SWORD_SWIPE_GAP = 0.25                 # rozostup dvoch švihov pri útoku
 var is_attacking = false
 var game_started = false
 var is_dead = false
+var is_sprinting = false                     # drží Shift a pohybuje sa
 
 # --- ODKAZY NA UZLY ---
 @onready var anim = $AnimatedSprite
@@ -53,10 +55,12 @@ func _handle_input():
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		
-	# Horizontálny pohyb
+	# Horizontálny pohyb (so sprintom na Shift)
 	var direction = Input.get_axis("ui_left", "ui_right")
+	is_sprinting = Input.is_action_pressed("sprint") and direction != 0
+	var current_speed = SPRINT_SPEED if is_sprinting else SPEED
 	if direction:
-		velocity.x = direction * SPEED
+		velocity.x = direction * current_speed
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
@@ -78,7 +82,7 @@ func _update_visuals():
 		if not is_on_floor():
 			anim.play("jump" if velocity.y < 0 else "fall")
 		elif velocity.x != 0:
-			anim.play("run")
+			anim.play("sprint" if is_sprinting else "run")
 		else:
 			anim.play("idle")
 
