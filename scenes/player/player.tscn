@@ -426,3 +426,6 @@ shape = SubResource("RectangleShape2D_0owmy")
 
 [node name="SwordSfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_sword")
+
+[node name="SwordSfx2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_sword")
