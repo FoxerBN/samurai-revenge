@@ -49,7 +49,7 @@ func _update_quest_progress(type: String, value: int, is_increment: bool = false
 		var q = active_quests[i]
 		# Aktualizujeme len aktívny quest – čakajúce questy sa nepočítajú,
 		# kým na ne nepríde rad.
-		if q.type == type and q.active and not q.completed:
+		if q.type == type and not q.completed:
 			if is_increment:
 				q.current += value
 			else:

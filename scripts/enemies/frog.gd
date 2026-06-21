@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var gravity: float = 980.0
 @export var max_hp: int = 100               # plné zdravie žaby (1 hit hráča = 50)
 
-const KNOCKBACK_FORCE := 140.0              # ako silno ju zásah odhodí dozadu
+const KNOCKBACK_FORCE := 240.0              # ako silno ju zásah odhodí dozadu
 const KNOCKBACK_FRICTION := 600.0           # ako rýchlo odhod doznie
 const HIT_STUN := 0.25                       # ako dlho je po zásahu omráčená (bez patrolu)
 
@@ -14,6 +14,8 @@ var hit_stun_time: float = 0.0               # zostávajúci čas omráčenia po
 var start_position: Vector2
 var direction: int = 1
 var is_dead := false
+
+const HIT_DAMAGE := 20                        # koľko HP ubere hráčovi jeden dotyk so žabou
 
 @onready var anim = $AnimatedSprite2D
 @onready var hit_sfx = $HitSfx
@@ -62,7 +64,11 @@ func _physics_process(delta: float) -> void:
 			var collision = get_slide_collision(i)
 			var collider = collision.get_collider()
 			if collider.is_in_group("player"):
-				if collider.has_method("die"):
+				# Nezabíja hneď: ubere HP, odhodí a omráči (rovnako ako útok
+				# hráča na žabu cez take_damage). Smrť až keď hráčovi dôjde HP.
+				if collider.has_method("take_damage"):
+					collider.take_damage(HIT_DAMAGE, global_position)
+				elif collider.has_method("die"):
 					collider.die()
 
 func _update_flip():

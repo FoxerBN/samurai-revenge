@@ -16,11 +16,22 @@ const GAMEPLAY_ZOOM = Vector2(1.3, 1.3)
 const SWORD_SWIPE_GAP = 0.25                 # rozostup dvoch švihov pri útoku na mieste
 const ATTACK_DAMAGE = 50                      # poškodenie za jeden zásah mečom (žaba má 100 hp)
 
+# Zásah od nepriateľa
+const MAX_HP = 100                            # plné zdravie hráča (žaba dáva 20 = 5 zásahov)
+const HIT_KNOCKBACK = 320.0                   # ako silno hráča odhodí dozadu pri zásahu
+const HIT_KNOCKBACK_UP = -160.0              # mierny nadhoz nahor pri zásahu
+const HIT_KNOCKBACK_FRICTION = 600.0          # ako rýchlo odhod doznie vo vzduchu (za sekundu)
+const HIT_GROUND_FRICTION = 2000.0            # po dopade na zem zastaví hneď (žiadny šmyk dopredu)
+const HIT_STUN = 0.3                          # ako dlho je hráč po zásahu omráčený (bez vstupu)
+
 # --- PREMENNÉ ---
 var is_attacking = false
 var game_started = false
 var is_dead = false
 var is_sprinting = false                     # drží Shift a pohybuje sa
+
+var hp = MAX_HP                              # aktuálne zdravie hráča
+var hit_stun_time = 0.0                      # zostávajúci čas omráčenia po zásahu (aj i-frames)
 
 # Dvojskok (z lektvaru): kým beží časovač, vo vzduchu môžeš skočiť ešte raz.
 var double_jump_time_left = 0.0              # koľko sekúnd je dvojskok ešte aktívny
@@ -33,6 +44,7 @@ var double_jump_used = false                 # už si dvojskok v tomto výskoku 
 @onready var body_collision = $CollisionShape2D
 # Dva prehrávače, aby sa pri dvojseku zvuky neprerušovali (striedame ich).
 @onready var sword_sfx = [$SwordSfx, $SwordSfx2]
+@onready var hit_sfx = $GetHitSfx                # zvuk pri zásahu od nepriateľa
 # Attack
 @onready var attack_pivot = $AttackPivot
 @onready var attack_hitbox = $AttackPivot/Hitbox
@@ -67,7 +79,16 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		move_and_slide()
 		return
-		
+
+	# Počas omráčenia po zásahu: žiadny vstup, len doznievajúci odhod.
+	if hit_stun_time > 0.0:
+		hit_stun_time -= delta
+		# Vo vzduchu jemné trenie (pekný odhod), po dopade silné (žiadny šmyk dopredu).
+		var friction = HIT_KNOCKBACK_FRICTION if not is_on_floor() else HIT_GROUND_FRICTION
+		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+		move_and_slide()
+		return
+
 	_handle_input()
 	move_and_slide()
 	_update_visuals()
@@ -244,6 +265,32 @@ func _clear_limits():
 	camera.limit_top = -10000000
 	camera.limit_right = 10000000
 	camera.limit_bottom = 10000000
+
+func take_damage(amount: int, source_position: Vector2) -> void:
+	""" Zásah od nepriateľa: uberie HP, odhodí hráča preč od zdroja a prehrá
+	animáciu + zvuk zásahu. Počas omráčenia (hit_stun) je hráč nezraniteľný
+	(i-frames), takže ho ten istý nepriateľ nevybije za pár snímok.
+	Pri 0 HP hráč zomrie. """
+	if is_dead or hit_stun_time > 0.0:
+		return
+	hp -= amount
+
+	# Odhod preč od nepriateľa + mierny nadhoz. Ak stoja presne na sebe,
+	# odhoď proti smeru, ktorým je hráč otočený.
+	var knock_dir := signf(global_position.x - source_position.x)
+	if knock_dir == 0.0:
+		knock_dir = -1.0 if anim.flip_h else 1.0
+	velocity.x = knock_dir * HIT_KNOCKBACK
+	velocity.y = HIT_KNOCKBACK_UP
+	hit_stun_time = HIT_STUN
+
+	if anim and anim.sprite_frames.has_animation("get_hit"):
+		anim.play("get_hit")
+	if hit_sfx:
+		hit_sfx.play()
+
+	if hp <= 0:
+		die()
 
 func die():
 	if is_dead: return

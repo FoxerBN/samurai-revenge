@@ -41,6 +41,16 @@ func open() -> void:
 		GameManager.add_quest("reach_portal", 1, portal_quest_text)
 	opened.emit()
 
+func close(duration: float = 2.0) -> void:
+	""" Plynulo zatvorí portál: zmenší ho do stratena (rovnako ako animácia
+	hide_portal v leveli 2). Použiteľné na vstupný portál, ktorým hráč prišiel
+	a ktorý sa má za ním zavrieť. Kým je zatvorený, neteleportuje. """
+	is_open = false
+	var tween := create_tween()
+	tween.tween_property(self, "scale", Vector2(0.00001, 0.00001), duration)
+	await tween.finished
+	visible = false
+
 func _on_body_entered(body: Node2D) -> void:
 	if is_open and next_level != "" and body.is_in_group("player"):
 		GameManager.reset_game()

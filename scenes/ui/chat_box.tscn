@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://dfjkhqslcgfxw"]
+
+[ext_resource type="Script" uid="uid://ck3xhls34yh4r" path="res://scripts/ui/chat_box.gd" id="1_chat"]
+[ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_box"]
+bg_color = Color(0.25, 0.25, 0.25, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.6, 0.6, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_jxf3v"]
+font_size = 8
+
+[node name="ChatBox" type="CanvasLayer" unique_id=671482827]
+scale = Vector2(0.7, 0.7)
+transform = Transform2D(0.7, 0, 0, 0.7, 0, 0)
+script = ExtResource("1_chat")
+
+[node name="Box" type="Panel" parent="." unique_id=295308294]
+anchors_preset = -1
+offset_left = 385.71426
+offset_top = 734.2857
+offset_right = 824.97424
+offset_bottom = 804.0257
+theme_override_styles/panel = SubResource("StyleBoxFlat_box")
+
+[node name="Margin" type="MarginContainer" parent="Box" unique_id=1809687946]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Text" type="Label" parent="Box/Margin" unique_id=942928235]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 5
+text = "..."
+label_settings = SubResource("LabelSettings_jxf3v")
+autowrap_mode = 2
+
+[node name="Hint" type="Label" parent="Box" unique_id=40241196]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -86.0
+offset_top = -20.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "SPACE ▶"

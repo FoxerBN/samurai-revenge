@@ -11,49 +11,13 @@
 [ext_resource type="PackedScene" uid="uid://c7q6x4r5y1v8u" path="res://scenes/ui/quest_ui.tscn" id="7_quest"]
 [ext_resource type="PackedScene" uid="uid://4wxyhnyb6eer" path="res://scenes/items/jump_potion.tscn" id="10_qsp8v"]
 [ext_resource type="PackedScene" uid="uid://bdq1yeadynitx" path="res://scenes/enemies/frog.tscn" id="11_nt80m"]
+[ext_resource type="PackedScene" uid="uid://chintscene01a" path="res://scenes/ui/hint.tscn" id="12_brxtv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j2425"]
 size = Vector2(40, 1000)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g2h2n"]
 size = Vector2(40, 1000)
-
-[sub_resource type="Animation" id="Animation_l37oo"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_qpwj6"]
-resource_name = "hide_portal"
-length = 2.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1e-05, 1e-05)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_ibugp"]
-_data = {
-&"RESET": SubResource("Animation_l37oo"),
-&"hide_portal": SubResource("Animation_qpwj6")
-}
 
 [node name="Level2" type="Node2D" unique_id=730222056]
 script = ExtResource("1_lvl2")
@@ -90,14 +54,12 @@ position = Vector2(1172, 324)
 shape = SubResource("RectangleShape2D_g2h2n")
 
 [node name="StoryDialog" parent="." unique_id=272430545 instance=ExtResource("2_g2h2n")]
+pages = ["[center]Defeat the frogs[/center]"]
 
 [node name="Portal" parent="." unique_id=578555819 instance=ExtResource("4_fiq81")]
 position = Vector2(18, 590)
 rotation = -3.1468287
 start_open = true
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Portal" unique_id=898466980]
-libraries/ = SubResource("AnimationLibrary_ibugp")
 
 [node name="Hud" parent="." unique_id=1298953941 instance=ExtResource("6_hud")]
 
@@ -113,7 +75,7 @@ position = Vector2(788, 500)
 position = Vector2(336, 589)
 
 [node name="CharacterBody2D2" parent="." unique_id=388283449 instance=ExtResource("11_nt80m")]
-position = Vector2(655, 588)
+position = Vector2(756, 589)
 
 [node name="CharacterBody2D3" parent="." unique_id=382711075 instance=ExtResource("11_nt80m")]
 position = Vector2(754, 493)
@@ -122,5 +84,8 @@ patrol_distance = 10.0
 [node name="Portal2" parent="." unique_id=1522840809 instance=ExtResource("4_fiq81")]
 position = Vector2(1135, 586)
 next_level = "uid://c1fbfmhanbdd6"
+
+[node name="Hint" parent="." unique_id=631030052 instance=ExtResource("12_brxtv")]
+message = "Go to portal fast !!!"
 
 [connection signal="finished" from="StoryDialog" to="Player" method="start_game"]

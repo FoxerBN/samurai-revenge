@@ -7,6 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://iog8mc1efdpd" path="res://scenes/ui/hud.tscn" id="6_apo5x"]
 [ext_resource type="PackedScene" uid="uid://c7q6x4r5y1v8u" path="res://scenes/ui/quest_ui.tscn" id="7_josfm"]
 [ext_resource type="PackedScene" uid="uid://ecyl3vp6fu5" path="res://scenes/player/player.tscn" id="8_lgrx1"]
+[ext_resource type="Script" uid="uid://fbejxivedtq1" path="res://scripts/levels/level_3.gd" id="9_lvl3"]
+[ext_resource type="PackedScene" uid="uid://bad5ehg5lmpb7" path="res://scenes/ui/portal.tscn" id="10_2bnyt"]
+[ext_resource type="PackedScene" uid="uid://chintscene01a" path="res://scenes/ui/hint.tscn" id="10_hint"]
+[ext_resource type="PackedScene" uid="uid://cdisa4vivfjkh" path="res://scenes/side-character/jawy.tscn" id="11_n6eey"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fkk1g"]
 size = Vector2(40, 1000)
@@ -15,6 +19,7 @@ size = Vector2(40, 1000)
 size = Vector2(40, 1000)
 
 [node name="Level3" type="Node2D" unique_id=1647233850]
+script = ExtResource("9_lvl3")
 
 [node name="background" type="Sprite2D" parent="." unique_id=1385815818]
 position = Vector2(586, 376.00003)
@@ -44,12 +49,25 @@ position = Vector2(1172, 324)
 shape = SubResource("RectangleShape2D_ugcn1")
 
 [node name="StoryDialog" parent="." unique_id=2089120629 instance=ExtResource("4_f6egh")]
+pages = ["[center]Defeat the annoying bee[/center]"]
 
 [node name="Hud" parent="." unique_id=328636459 instance=ExtResource("6_apo5x")]
 
 [node name="QuestUI" parent="." unique_id=223645816 instance=ExtResource("7_josfm")]
 
+[node name="Hint" parent="." unique_id=33482693 instance=ExtResource("10_hint")]
+auto_on_objective = false
+
+[node name="Jawy" parent="." unique_id=1467437258 instance=ExtResource("11_n6eey")]
+position = Vector2(156, 592)
+scale = Vector2(0.93429303, 0.7342193)
+dialogue = PackedStringArray("Oh thank goodness, a person! I thought I\'d be talking to that rock forever.", "A giant bee stole my lunch. My LUNCH. This means war.", "You look strong. And confused. Perfect combo for a hero, honestly.", "Defeat the bee and I\'ll reward you. With my eternal gratitude... and maybe a coin.")
+
 [node name="Player" parent="." unique_id=143573301 instance=ExtResource("8_lgrx1")]
 position = Vector2(57, 592)
+
+[node name="Portal" parent="." unique_id=578555819 instance=ExtResource("10_2bnyt")]
+position = Vector2(41, 591)
+start_open = true
 
 [connection signal="finished" from="StoryDialog" to="Player" method="start_game"]
