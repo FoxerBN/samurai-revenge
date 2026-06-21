@@ -9,50 +9,48 @@
 [ext_resource type="Texture2D" uid="uid://dwlceruikb5sv" path="res://assets/sprites/Character/Run/Run-Sheet.png" id="6_je7p5"]
 [ext_resource type="AudioStream" uid="uid://coego2x8drm6c" path="res://assets/sounds/sword swipe.mp3" id="7_sword"]
 [ext_resource type="Texture2D" uid="uid://ctednfs7vvgm8" path="res://assets/sprites/Character/Sprint/sprint.png" id="8_5gtgg"]
-[ext_resource type="Texture2D" uid="uid://ei08x42t0wwi" path="res://assets/sprites/Character/aura.png" id="10_h17s1"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_a38bk"]
-atlas = ExtResource("10_h17s1")
-region = Rect2(0, 0, 32, 32)
+[sub_resource type="Gradient" id="Gradient_h17s1"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.16666667)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3chqh"]
-atlas = ExtResource("10_h17s1")
-region = Rect2(32, 0, 32, 32)
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_je7p5"]
+gradient = SubResource("Gradient_h17s1")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pwfqx"]
-atlas = ExtResource("10_h17s1")
-region = Rect2(64, 0, 32, 32)
+[sub_resource type="Gradient" id="Gradient_fm80t"]
+offsets = PackedFloat32Array(0, 0.49122807, 1)
+colors = PackedColorArray(0.9685872, 5.679429e-06, 7.70092e-07, 1, 0.87058824, 0, 0.3372549, 0.5372549, 1, 0.21176471, 0.16078432, 0)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kssj8"]
-atlas = ExtResource("10_h17s1")
-region = Rect2(96, 0, 32, 32)
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gx1jg"]
+gradient = SubResource("Gradient_fm80t")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8lfxt"]
-atlas = ExtResource("10_h17s1")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_lclul"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_a38bk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3chqh")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pwfqx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kssj8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8lfxt")
-}],
-"loop": true,
-"name": &"aura",
-"speed": 9.0
-}]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ugbui"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 8.17
+emission_ring_inner_radius = 16.42
+emission_ring_cone_angle = 59.77
+direction = Vector3(0, -1, 0)
+spread = 11.087
+initial_velocity_min = 40.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -79.28
+linear_accel_max = 27.029997
+radial_accel_min = -2.2351742e-06
+radial_accel_max = 57.549995
+scale_min = 0.19999999
+scale_max = 0.95
+color = Color(0.80784315, 0, 0, 0.7882353)
+color_ramp = SubResource("GradientTexture1D_gx1jg")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fm80t"]
 atlas = ExtResource("2_0owmy")
@@ -503,22 +501,25 @@ height = 36.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0owmy"]
 size = Vector2(51.5, 20)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5gtgg"]
+size = Vector2(30.547092, 36.199627)
+
 [node name="Player" type="CharacterBody2D" unique_id=143573301]
 collision_mask = 3
 script = ExtResource("1_75vfm")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=837559119]
-visible = false
-scale = Vector2(2.7187502, 2.8125)
-sprite_frames = SubResource("SpriteFrames_lclul")
-animation = &"aura"
-frame_progress = 0.8489023
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1527154003]
+position = Vector2(1, 9)
+amount = 26
+texture = SubResource("GradientTexture2D_je7p5")
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_ugbui")
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="." unique_id=813298551]
 position = Vector2(0, -2)
 sprite_frames = SubResource("SpriteFrames_w8qe1")
-animation = &"sprint"
-frame_progress = 0.38472527
+animation = &"attack"
+frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=678263730]
 position = Vector2(3, 0)
@@ -543,3 +544,15 @@ stream = ExtResource("7_sword")
 
 [node name="SwordSfx2" type="AudioStreamPlayer" parent="." unique_id=633668390]
 stream = ExtResource("7_sword")
+
+[node name="AttackPivot" type="Node2D" parent="." unique_id=1185878797]
+
+[node name="Hitbox" type="Area2D" parent="AttackPivot" unique_id=1911478280]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackPivot/Hitbox" unique_id=258712416]
+position = Vector2(24.133133, -3.999999)
+scale = Vector2(0.97337365, 1.4364789)
+shape = SubResource("RectangleShape2D_5gtgg")

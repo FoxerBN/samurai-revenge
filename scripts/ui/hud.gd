@@ -32,8 +32,8 @@ func _refresh():
 	enemy_icon.visible = is_kill
 
 func _primary_quest():
-	""" Vráti hlavný quest levelu (mince/zabíjanie), inak null. """
+	""" Vráti práve aktívny hlavný quest levelu (mince/zabíjanie), inak null. """
 	for q in GameManager.active_quests:
-		if q.type == "coins" or q.type == "enemy_kill":
+		if (q.type == "coins" or q.type == "enemy_kill") and q.active and not q.completed:
 			return q
 	return null

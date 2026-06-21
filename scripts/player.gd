@@ -14,6 +14,7 @@ const MAP_CENTER = Vector2(576, 324)        # stred mapy (náhľad pred štartom
 const OVERVIEW_ZOOM = Vector2(0.7, 0.7)
 const GAMEPLAY_ZOOM = Vector2(1.3, 1.3)
 const SWORD_SWIPE_GAP = 0.25                 # rozostup dvoch švihov pri útoku na mieste
+const ATTACK_DAMAGE = 50                      # poškodenie za jeden zásah mečom (žaba má 100 hp)
 
 # --- PREMENNÉ ---
 var is_attacking = false
@@ -27,18 +28,21 @@ var double_jump_used = false                 # už si dvojskok v tomto výskoku 
 
 # --- ODKAZY NA UZLY ---
 @onready var anim = $AnimatedSprite
-@onready var aura = $AnimatedSprite2D            # vizuálna aura počas dvojskoku
+@onready var aura = $GPUParticles2D              # vizuálna aura (particles) počas dvojskoku
 @onready var camera = $Camera2D
 @onready var body_collision = $CollisionShape2D
 # Dva prehrávače, aby sa pri dvojseku zvuky neprerušovali (striedame ich).
 @onready var sword_sfx = [$SwordSfx, $SwordSfx2]
+# Attack
+@onready var attack_pivot = $AttackPivot
+@onready var attack_hitbox = $AttackPivot/Hitbox
 
 # --- ZÁKLADNÉ FUNKCIE ---
 
 func _ready():
 	add_to_group("player")
 	_setup_initial_camera()
-	aura.play("aura")            # aura sa stále prehráva, len ju skrývame/zobrazujeme
+	aura.emitting = false        # particles sa spustia len počas dvojskoku
 
 	# Správanie na šikmých plochách (svahoch):
 	floor_snap_length = 32.0           # drží postavu pri zemi pri schádzaní (nehrá sa "fall")
@@ -57,10 +61,8 @@ func _physics_process(delta: float) -> void:
 	if double_jump_time_left > 0.0:
 		double_jump_time_left = max(0.0, double_jump_time_left - delta)
 
-	# Aura je viditeľná presne počas platnosti dvojskoku.
-	aura.visible = double_jump_time_left > 0.0
-	if aura.visible:
-		aura.flip_h = anim.flip_h            # aura sa otáča spolu s postavou
+	# Aura (particles) emituje presne počas platnosti dvojskoku.
+	aura.emitting = double_jump_time_left > 0.0
 
 	if is_dead:
 		move_and_slide()
@@ -78,7 +80,7 @@ func _handle_input():
 		double_jump_used = false
 
 	# Skok: zo zeme normálne, vo vzduchu jeden dvojskok (ak je lektvar aktívny).
-	if Input.is_action_just_pressed("ui_accept"):
+	if Input.is_action_just_pressed("jump"):
 		if is_on_floor():
 			velocity.y = JUMP_VELOCITY
 		elif double_jump_time_left > 0.0 and not double_jump_used:
@@ -86,8 +88,8 @@ func _handle_input():
 			double_jump_used = true
 		
 	# Horizontálny pohyb (so sprintom na Shift)
-	var direction = Input.get_axis("ui_left", "ui_right")
-	is_sprinting = Input.is_action_pressed("sprint") and direction != 0
+	var direction = Input.get_axis("move_left", "move_right")
+	is_sprinting = Input.is_action_pressed("sprint") and is_on_floor() and direction != 0
 	var current_speed = SPRINT_SPEED if is_sprinting else SPEED
 	if direction:
 		velocity.x = direction * current_speed
@@ -95,7 +97,7 @@ func _handle_input():
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	# Útok
-	if Input.is_action_just_pressed("ui_q") and not is_attacking:
+	if Input.is_action_just_pressed("attack") and not is_attacking:
 		attack()
 	
 	# Interakcia (E)
@@ -106,7 +108,9 @@ func _handle_input():
 
 func _update_visuals():
 	if velocity.x != 0:
+		var facing_left = velocity.x < 0
 		anim.flip_h = velocity.x < 0
+		attack_pivot.scale.x = -1 if facing_left else 1
 		
 	if not is_attacking:
 		if not is_on_floor():
@@ -118,6 +122,7 @@ func _update_visuals():
 
 func attack():
 	is_attacking = true
+	GameManager.notify_sword_swing()
 	# Útok na mieste = dva švihy (2 zvuky), útok počas behu = jeden švih (1 zvuk).
 	if velocity.x != 0:
 		anim.play("run_attack")
@@ -125,8 +130,22 @@ func attack():
 	else:
 		anim.play("attack")
 		_play_sword_swipe(2)
+		
+	await get_tree().create_timer(0.15).timeout
+	_deal_damage()
+	
 	await anim.animation_finished
 	is_attacking = false
+	
+func _deal_damage():
+	for body in attack_hitbox.get_overlapping_bodies():
+		if not body.is_in_group("enemy"):
+			continue
+		# Nepriatelia so zdravím dostanú poškodenie (a knockback), ostatní zomrú hneď.
+		if body.has_method("take_damage"):
+			body.take_damage(ATTACK_DAMAGE, global_position)
+		elif body.has_method("die"):
+			body.die()
 
 func _play_sword_swipe(times: int) -> void:
 	""" Prehrá zvuk švihu mečom `times`-krát za sebou (len počas seknutia).

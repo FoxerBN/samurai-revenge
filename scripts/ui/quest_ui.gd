@@ -28,7 +28,10 @@ func _on_quest_updated(index: int):
 	var panel = container.get_child(index)
 	var label = panel.get_node("HBox/Label")
 	var checkbox = panel.get_node("HBox/CheckBox")
-	
+
+	# Zobrazený je len práve aktívny, nedokončený quest (sekvenčné questy).
+	panel.visible = quest.active and not quest.completed
+
 	label.text = "%s: %d/%d" % [quest.description, quest.current, quest.target]
 	checkbox.button_pressed = quest.completed
 	

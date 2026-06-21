@@ -14,10 +14,10 @@ signal finished
 const DEFAULT_PAGES: PackedStringArray = [
 	"[center]CONTROLS[/center]
 
-← →       Move
+A D       Move
 SHIFT     Sprint
 SPACE     Jump
-Q         Attack
+J         Attack
 E         Action",
 	"[center]You are Tove.
 

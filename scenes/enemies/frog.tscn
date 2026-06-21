@@ -1,7 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://bdq1yeadynitx"]
+[gd_scene format=3 uid="uid://bdq1yeadynitx"]
 
-[ext_resource type="Script" uid="uid://dcv0spy40mihq" path="res://scripts/enemies/frog.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://i48ibbex58ix" path="res://assets/sprites/Character/slime-npc.png" id="1_lohqt"]
+[ext_resource type="Script" uid="uid://dcv0spy40mihq" path="res://scripts/enemies/frog.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cpirth7vjde53" path="res://assets/sprites/Character/slime-npc-hitted.png" id="3_d72w0"]
+[ext_resource type="AudioStream" uid="uid://56xqo3s7jvue" path="res://assets/sounds/hit.mp3" id="4_hitsfx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kosjv"]
 atlas = ExtResource("1_lohqt")
@@ -31,6 +33,34 @@ region = Rect2(160, 0, 32, 32)
 atlas = ExtResource("1_lohqt")
 region = Rect2(192, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_2a0kb"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cs1ye"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_72bdi"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1snb5"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jljbn"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ofv0u"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ggdi"]
+atlas = ExtResource("3_d72w0")
+region = Rect2(192, 0, 32, 32)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_2a0kb"]
 animations = [{
 "frames": [{
@@ -58,6 +88,32 @@ animations = [{
 "loop": true,
 "name": &"frog_move",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2a0kb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cs1ye")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_72bdi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1snb5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jljbn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ofv0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ggdi")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 8.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_cs1ye"]
@@ -69,11 +125,13 @@ script = ExtResource("1_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=926714968]
 sprite_frames = SubResource("SpriteFrames_2a0kb")
-animation = &"frog_move"
+animation = &"hit"
 autoplay = "frog_move"
-frame = 2
-frame_progress = 0.3546574
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2054300378]
 position = Vector2(-5, 9)
 shape = SubResource("CircleShape2D_cs1ye")
+
+[node name="HitSfx" type="AudioStreamPlayer2D" parent="." unique_id=2054300379]
+stream = ExtResource("4_hitsfx")
+volume_db = 10.329
