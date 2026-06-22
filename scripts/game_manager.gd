@@ -3,6 +3,7 @@ extends Node
 # --- SIGNÁLY ---
 signal coins_changed(new_amount: int)
 signal quest_updated(quest_index: int)
+signal quest_completed(quest)   # konkrétny quest sa práve dokončil
 signal objective_completed   # hlavný cieľ levelu (mince/zabíjanie) je splnený
 
 # --- PREMENNÉ ---
@@ -58,6 +59,7 @@ func _update_quest_progress(type: String, value: int, is_increment: bool = false
 			if q.current >= q.target:
 				q.current = q.target
 				q.completed = true
+				quest_completed.emit(q)
 				if q.type != "reach_portal":
 					# Cieľ levelu (otvorenie portálu) je splnený, až keď sú
 					# hotové VŠETKY hlavné questy. Inak spustíme ďalší v poradí.

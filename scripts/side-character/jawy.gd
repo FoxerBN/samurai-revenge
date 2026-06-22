@@ -6,12 +6,17 @@ extends CharacterBody2D
 ## sa otvorí chat box s textom tejto postavy.
 
 const CHAT_BOX := preload("res://scenes/ui/chat_box.tscn")
+const COIN := preload("res://scenes/items/coin.tscn")
 
 ## Text rozhovoru — každý prvok poľa je jedna strana. Vyplň v Inšpektore.
 @export var dialogue: PackedStringArray
 
 @onready var prompt: Label = $Label
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
+
+# Questy pridávame až po prvom rozhovore; mincu (odmenu) dáme len raz.
+var quests_given := false
+var coin_dropped := false
 
 func _ready() -> void:
 	add_to_group("npc")
@@ -23,6 +28,8 @@ func _ready() -> void:
 	var area: Area2D = $InteractionArea
 	area.body_entered.connect(_on_body_entered)
 	area.body_exited.connect(_on_body_exited)
+	# Keď sa dokončí ktorýkoľvek quest, dozvieme sa to a vieme zareagovať.
+	GameManager.quest_completed.connect(_on_quest_completed)
 
 func _on_body_entered(body: Node2D) -> void:
 	if not body.is_in_group("player"):
@@ -49,9 +56,30 @@ func interact() -> void:
 	box.show_pages(dialogue)
 
 func _on_chat_closed() -> void:
+	# Po prvom rozhovore zadáme úlohy: najprv zabi žaby, potom vezmi odmenu.
+	if not quests_given:
+		quests_given = true
+		GameManager.add_quest("enemy_kill", 2, "Defeat the frogs")
+		GameManager.add_quest("coins", 1, "Take the reward")
+
 	if not anim:
 		return
 	# Dohrá celé idle-end (ruka dole) a až potom sa vráti do normálneho idle.
 	anim.play("idle-end")
 	await anim.animation_finished
 	anim.play("idle")
+
+## Reaguje na dokončenie ktoréhokoľvek questu. Keď sú žaby zabité,
+## stranger vyhodí odmenu (mincu) vedľa seba — to je druhý quest.
+func _on_quest_completed(quest) -> void:
+	if coin_dropped:
+		return
+	if quest.type == "enemy_kill":
+		coin_dropped = true
+		_spawn_reward_coin()
+
+func _spawn_reward_coin() -> void:
+	var coin := COIN.instantiate()
+	get_parent().add_child(coin)
+	# Kúsok vedľa strangera, aby "vypadla" von.
+	coin.global_position = global_position + Vector2(30, 0)

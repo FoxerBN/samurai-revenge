@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bad5ehg5lmpb7" path="res://scenes/ui/portal.tscn" id="10_2bnyt"]
 [ext_resource type="PackedScene" uid="uid://chintscene01a" path="res://scenes/ui/hint.tscn" id="10_hint"]
 [ext_resource type="PackedScene" uid="uid://cdisa4vivfjkh" path="res://scenes/side-character/jawy.tscn" id="11_n6eey"]
+[ext_resource type="PackedScene" uid="uid://bdq1yeadynitx" path="res://scenes/enemies/frog.tscn" id="12_qi5uv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fkk1g"]
 size = Vector2(40, 1000)
@@ -70,4 +71,21 @@ position = Vector2(57, 592)
 position = Vector2(41, 591)
 start_open = true
 
+[node name="Portal-finish" parent="." unique_id=2067611364 instance=ExtResource("10_2bnyt")]
+position = Vector2(1127, 586)
+
+[node name="Enemy" type="Node2D" parent="." unique_id=714593678]
+
+[node name="CharacterBody2D" parent="Enemy" unique_id=1731346180 instance=ExtResource("12_qi5uv")]
+position = Vector2(365, 589)
+speed = 75.0
+patrol_distance = 80.0
+max_hp = 200
+
+[node name="CharacterBody2D2" parent="Enemy" unique_id=239724389 instance=ExtResource("12_qi5uv")]
+position = Vector2(750, 496)
+patrol_distance = 20.0
+max_hp = 150
+
 [connection signal="finished" from="StoryDialog" to="Player" method="start_game"]
+[connection signal="visibility_changed" from="StoryDialog" to="Player" method="_on_story_dialog_visibility_changed"]

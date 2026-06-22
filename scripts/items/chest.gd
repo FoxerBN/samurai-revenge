@@ -11,6 +11,7 @@ var is_opened = false
 var player_in_range = false
 
 func _ready():
+	add_to_group("chest")
 	# Skryjeme nápis na začiatku
 	if prompt:
 		prompt.hide()
