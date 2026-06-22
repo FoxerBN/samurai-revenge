@@ -61,7 +61,7 @@ auto_on_objective = false
 
 [node name="Jawy" parent="." unique_id=1467437258 instance=ExtResource("11_n6eey")]
 position = Vector2(156, 592)
-scale = Vector2(0.93429303, 0.7342193)
+scale = Vector2(0.97429305, 0.8542193)
 dialogue = PackedStringArray("Oh thank goodness, a person! I thought I\'d be talking to that rock forever.", "A giant bee stole my lunch. My LUNCH. This means war.", "You look strong. And confused. Perfect combo for a hero, honestly.", "Defeat the bee and I\'ll reward you. With my eternal gratitude... and maybe a coin.")
 
 [node name="Player" parent="." unique_id=143573301 instance=ExtResource("8_lgrx1")]

@@ -220,17 +220,20 @@ theme_override_font_sizes/font_size = 7
 text = "E Talk"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1673411571]
+modulate = Color(1.0868789, 1.0868789, 1.0868789, 1)
 scale = Vector2(-0.91946346, 0.8688657)
 sprite_frames = SubResource("SpriteFrames_4qw5m")
 animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2106624215]
+visible = false
 position = Vector2(-1, 0.5)
 scale = Vector2(1.044952, 0.89665484)
 shape = SubResource("RectangleShape2D_e4jq1")
 
 [node name="InteractionArea" type="Area2D" parent="." unique_id=199241360]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea" unique_id=1237704756]
 shape = SubResource("CircleShape2D_talk")
