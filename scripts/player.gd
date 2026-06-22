@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+signal hp_changed(value, max_value)
+signal stamina_changed(value, max_value)
+
 # --- KONŠTANTY ---
 const SPEED = 130.0
 const SPRINT_SPEED = 185.0                   # rýchlosť pri držaní Shiftu
@@ -18,6 +21,12 @@ const ATTACK_DAMAGE = 50                      # poškodenie za jeden zásah meč
 
 # Zásah od nepriateľa
 const MAX_HP = 100                            # plné zdravie hráča (žaba dáva 20 = 5 zásahov)
+const MAX_STAMINA = 100.0
+const SPRINT_STAMINA_COST = 10.0              # koľko staminy zoberie 1 sekunda sprintu
+const ATTACK_STAMINA_COST = 5.0               # koľko staminy zoberie jeden útok mečom
+const STAMINA_REGEN = 20.0                    # koľko staminy sa doplní za 1 sekundu
+const HP_REGEN_DELAY = 3.0                    # koľko sekúnd po zásahu sa čaká na liečenie
+const HP_REGEN_RATE = 10.0                    # koľko HP sa doplní za 1 sekundu
 const HIT_KNOCKBACK = 320.0                   # ako silno hráča odhodí dozadu pri zásahu
 const HIT_KNOCKBACK_UP = -160.0              # mierny nadhoz nahor pri zásahu
 const HIT_KNOCKBACK_FRICTION = 600.0          # ako rýchlo odhod doznie vo vzduchu (za sekundu)
@@ -31,7 +40,9 @@ var is_dead = false
 var is_sprinting = false                     # drží Shift a pohybuje sa
 
 var hp = MAX_HP                              # aktuálne zdravie hráča
+var stamina = MAX_STAMINA                    # aktuálna stamina hráča
 var hit_stun_time = 0.0                      # zostávajúci čas omráčenia po zásahu (aj i-frames)
+var hp_regen_delay_left = 0.0                # kým je > 0, HP sa ešte nedobíja
 
 # Dvojskok (z lektvaru): kým beží časovač, vo vzduchu môžeš skočiť ešte raz.
 var double_jump_time_left = 0.0              # koľko sekúnd je dvojskok ešte aktívny
@@ -80,6 +91,9 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
+	_update_stamina(delta)
+	_update_hp_regen(delta)
+
 	# Počas omráčenia po zásahu: žiadny vstup, len doznievajúci odhod.
 	if hit_stun_time > 0.0:
 		hit_stun_time -= delta
@@ -110,7 +124,7 @@ func _handle_input():
 		
 	# Horizontálny pohyb (so sprintom na Shift)
 	var direction = Input.get_axis("move_left", "move_right")
-	is_sprinting = Input.is_action_pressed("sprint") and is_on_floor() and direction != 0
+	is_sprinting = Input.is_action_pressed("sprint") and is_on_floor() and direction != 0 and stamina > 0.0
 	var current_speed = SPRINT_SPEED if is_sprinting else SPEED
 	if direction:
 		velocity.x = direction * current_speed
@@ -118,12 +132,37 @@ func _handle_input():
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	# Útok
-	if Input.is_action_just_pressed("attack") and not is_attacking:
+	if Input.is_action_just_pressed("attack") and not is_attacking and stamina >= ATTACK_STAMINA_COST:
+		stamina = max(0.0, stamina - ATTACK_STAMINA_COST)
+		stamina_changed.emit(stamina, MAX_STAMINA)
 		attack()
 	
 	# Interakcia (E)
 	if Input.is_action_just_pressed("interact"):
 		_handle_interaction()
+
+func _update_stamina(delta: float) -> void:
+	var previous_stamina = stamina
+	if is_sprinting:
+		stamina = max(0.0, stamina - SPRINT_STAMINA_COST * delta)
+	else:
+		stamina = min(MAX_STAMINA, stamina + STAMINA_REGEN * delta)
+
+	if stamina != previous_stamina:
+		stamina_changed.emit(stamina, MAX_STAMINA)
+
+func _update_hp_regen(delta: float) -> void:
+	if hp >= MAX_HP:
+		return
+
+	if hp_regen_delay_left > 0.0:
+		hp_regen_delay_left = max(0.0, hp_regen_delay_left - delta)
+		return
+
+	var previous_hp = hp
+	hp = min(float(MAX_HP), hp + HP_REGEN_RATE * delta)
+	if hp != previous_hp:
+		hp_changed.emit(hp, MAX_HP)
 
 # --- VIZUÁL A ANIMÁCIE ---
 
@@ -144,6 +183,8 @@ func _update_visuals():
 func attack():
 	is_attacking = true
 	GameManager.notify_sword_swing()
+	var hit_targets: Array[Node] = []
+
 	# Útok na mieste = dva švihy (2 zvuky), útok počas behu = jeden švih (1 zvuk).
 	if velocity.x != 0:
 		anim.play("run_attack")
@@ -151,17 +192,32 @@ func attack():
 	else:
 		anim.play("attack")
 		_play_sword_swipe(2)
-		
-	await get_tree().create_timer(0.15).timeout
-	_deal_damage()
-	
+
+	_run_attack_hit_checks(hit_targets)
 	await anim.animation_finished
 	is_attacking = false
+
+func _run_attack_hit_checks(hit_targets: Array[Node]) -> void:
+	await get_tree().create_timer(0.12).timeout
+	if not is_attacking:
+		return
+	_deal_damage(hit_targets)
+	await get_tree().create_timer(0.08).timeout
+	if not is_attacking:
+		return
+	_deal_damage(hit_targets)
+	await get_tree().create_timer(0.08).timeout
+	if not is_attacking:
+		return
+	_deal_damage(hit_targets)
 	
-func _deal_damage():
+func _deal_damage(hit_targets: Array[Node]):
 	for body in attack_hitbox.get_overlapping_bodies():
 		if not body.is_in_group("enemy"):
 			continue
+		if hit_targets.has(body):
+			continue
+		hit_targets.append(body)
 		# Nepriatelia so zdravím dostanú poškodenie (a knockback), ostatní zomrú hneď.
 		if body.has_method("take_damage"):
 			body.take_damage(ATTACK_DAMAGE, global_position)
@@ -273,7 +329,9 @@ func take_damage(amount: int, source_position: Vector2) -> void:
 	Pri 0 HP hráč zomrie. """
 	if is_dead or hit_stun_time > 0.0:
 		return
-	hp -= amount
+	hp = max(0, hp - amount)
+	hp_regen_delay_left = HP_REGEN_DELAY
+	hp_changed.emit(hp, MAX_HP)
 
 	# Odhod preč od nepriateľa + mierny nadhoz. Ak stoja presne na sebe,
 	# odhoď proti smeru, ktorým je hráč otočený.
