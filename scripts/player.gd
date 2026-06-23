@@ -23,7 +23,8 @@ const ATTACK_DAMAGE = 50                      # poškodenie za jeden zásah meč
 const MAX_HP = 100                            # plné zdravie hráča (žaba dáva 20 = 5 zásahov)
 const MAX_STAMINA = 100.0
 const SPRINT_STAMINA_COST = 10.0              # koľko staminy zoberie 1 sekunda sprintu
-const ATTACK_STAMINA_COST = 5.0               # koľko staminy zoberie jeden útok mečom
+const ATTACK_STAMINA_COST = 12.0              # koľko staminy zoberie jeden útok mečom
+const STAMINA_REGEN_DELAY = 1.5               # koľko sekúnd po použití staminy sa čaká na doplnenie
 const STAMINA_REGEN = 20.0                    # koľko staminy sa doplní za 1 sekundu
 const HP_REGEN_DELAY = 3.0                    # koľko sekúnd po zásahu sa čaká na liečenie
 const HP_REGEN_RATE = 10.0                    # koľko HP sa doplní za 1 sekundu
@@ -43,6 +44,7 @@ var hp = MAX_HP                              # aktuálne zdravie hráča
 var stamina = MAX_STAMINA                    # aktuálna stamina hráča
 var hit_stun_time = 0.0                      # zostávajúci čas omráčenia po zásahu (aj i-frames)
 var hp_regen_delay_left = 0.0                # kým je > 0, HP sa ešte nedobíja
+var stamina_regen_delay_left = 0.0           # kým je > 0, stamina sa ešte nedobíja
 
 # Dvojskok (z lektvaru): kým beží časovač, vo vzduchu môžeš skočiť ešte raz.
 var double_jump_time_left = 0.0              # koľko sekúnd je dvojskok ešte aktívny
@@ -134,6 +136,7 @@ func _handle_input():
 	# Útok
 	if Input.is_action_just_pressed("attack") and not is_attacking and stamina >= ATTACK_STAMINA_COST:
 		stamina = max(0.0, stamina - ATTACK_STAMINA_COST)
+		stamina_regen_delay_left = STAMINA_REGEN_DELAY
 		stamina_changed.emit(stamina, MAX_STAMINA)
 		attack()
 	
@@ -145,7 +148,11 @@ func _update_stamina(delta: float) -> void:
 	var previous_stamina = stamina
 	if is_sprinting:
 		stamina = max(0.0, stamina - SPRINT_STAMINA_COST * delta)
+		stamina_regen_delay_left = STAMINA_REGEN_DELAY
 	else:
+		if stamina_regen_delay_left > 0.0:
+			stamina_regen_delay_left = max(0.0, stamina_regen_delay_left - delta)
+			return
 		stamina = min(MAX_STAMINA, stamina + STAMINA_REGEN * delta)
 
 	if stamina != previous_stamina:

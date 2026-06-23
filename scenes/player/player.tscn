@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c1qkpevxwud8o" path="res://scripts/player.gd" id="1_75vfm"]
 [ext_resource type="Texture2D" uid="uid://coaul2cgm6inh" path="res://assets/sprites/Character/Attack-01/Attack-01-Sheet.png" id="2_0owmy"]
+[ext_resource type="PackedScene" uid="uid://uhbkqq24qki2" path="res://scenes/player/stat_bar.tscn" id="2_je7p5"]
 [ext_resource type="Texture2D" uid="uid://cya5xuoh4mgb8" path="res://assets/sprites/Character/Dead/Dead-Sheet.png" id="3_qek5x"]
 [ext_resource type="Texture2D" uid="uid://2eb7crdixdop" path="res://assets/sprites/Character/Jump-End/Jump-End-Sheet.png" id="4_5gtgg"]
 [ext_resource type="Texture2D" uid="uid://bd42jpkhyur5p" path="res://assets/sprites/Character/Idle/Idle-Sheet.png" id="5_0owmy"]
@@ -541,6 +542,12 @@ size = Vector2(30.547092, 36.199627)
 [node name="Player" type="CharacterBody2D" unique_id=143573301]
 collision_mask = 3
 script = ExtResource("1_75vfm")
+
+[node name="StatBar" parent="." unique_id=1367689428 instance=ExtResource("2_je7p5")]
+offset_left = -19.0
+offset_top = -37.0
+offset_right = 19.0
+offset_bottom = -25.0
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1527154003]
 position = Vector2(1, 9)
