@@ -59,7 +59,7 @@ func _on_chat_closed() -> void:
 	# Po prvom rozhovore zadáme úlohy: najprv zabi žaby, potom vezmi odmenu.
 	if not quests_given:
 		quests_given = true
-		GameManager.add_quest("enemy_kill", 2, "Defeat the frogs")
+		GameManager.add_quest("enemy_kill", 1, "Defeat the dangerous bee")
 		GameManager.add_quest("coins", 1, "Take the reward")
 
 	if not anim:

@@ -1,7 +1,7 @@
 extends Area2D
 
 # Ako dlho po zobratí má hráč k dispozícii dvojskok (v sekundách).
-const DOUBLE_JUMP_DURATION = 5.0
+const DOUBLE_JUMP_DURATION = 7.0
 
 @onready var anim_sprite = $AnimatedSprite2D
 @onready var anim_player = $AnimationPlayer

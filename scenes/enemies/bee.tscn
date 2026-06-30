@@ -1,0 +1,147 @@
+[gd_scene format=3 uid="uid://cbv5ah3p12ho6"]
+
+[ext_resource type="Texture2D" uid="uid://bib0fvsnk4opn" path="res://assets/sprites/Character/Small Bee/Attack/Attack-Sheet.png" id="1_1v56o"]
+[ext_resource type="Texture2D" uid="uid://boewjf4rbhkyl" path="res://assets/sprites/Character/Small Bee/Fly/Fly-Sheet.png" id="2_m8jay"]
+[ext_resource type="Texture2D" uid="uid://c2a6vhsmyfbos" path="res://assets/sprites/Character/Small Bee/Hit/Hit-Sheet.png" id="3_aoy3q"]
+[ext_resource type="FontFile" uid="uid://c64dtnq0wc14y" path="res://assets/fonts/PressStart2P-Regular.ttf" id="4_m8jay"]
+[ext_resource type="Script" uid="uid://ctsxlci7mp2o7" path="res://scripts/enemies/bee.gd" id="5_script"]
+[ext_resource type="AudioStream" uid="uid://c2bmodiyu75ec" path="res://assets/sounds/bee-fly.mp3" id="6_auj8d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_auj8d"]
+atlas = ExtResource("1_1v56o")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvlfr"]
+atlas = ExtResource("1_1v56o")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idsaa"]
+atlas = ExtResource("1_1v56o")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2rca"]
+atlas = ExtResource("1_1v56o")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x2sgv"]
+atlas = ExtResource("2_m8jay")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nn0mt"]
+atlas = ExtResource("2_m8jay")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0row"]
+atlas = ExtResource("2_m8jay")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_na2yh"]
+atlas = ExtResource("2_m8jay")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uc136"]
+atlas = ExtResource("3_aoy3q")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tgfrd"]
+atlas = ExtResource("3_aoy3q")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fn0lj"]
+atlas = ExtResource("3_aoy3q")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7xclb"]
+atlas = ExtResource("3_aoy3q")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2m151"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_auj8d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvlfr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idsaa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s2rca")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x2sgv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nn0mt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f0row")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_na2yh")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uc136")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tgfrd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fn0lj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7xclb")
+}],
+"loop": true,
+"name": &"hit",
+"speed": 8.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f4tfv"]
+radius = 4.9239388
+height = 18.431656
+
+[node name="Bee" type="CharacterBody2D" unique_id=748964638]
+collision_layer = 2
+script = ExtResource("5_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=487986040]
+sprite_frames = SubResource("SpriteFrames_2m151")
+animation = &"attack"
+autoplay = "fly"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1630807986]
+rotation = -0.73702216
+shape = SubResource("CapsuleShape2D_f4tfv")
+
+[node name="Label" type="Label" parent="." unique_id=1636904537]
+visible = false
+offset_left = -18.0
+offset_top = -24.0
+offset_right = 1.0
+offset_bottom = -4.0
+theme_override_colors/font_color = Color(1, 0.13999999, 0.13999999, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("4_m8jay")
+theme_override_font_sizes/font_size = 18
+text = "!"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1171327542]
+stream = ExtResource("6_auj8d")
+volume_db = 19.737
+autoplay = true
+max_distance = 232.0
+parameters/looping = true
