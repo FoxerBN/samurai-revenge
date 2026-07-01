@@ -29,14 +29,15 @@ func _on_quest_updated(index: int):
 	var label = panel.get_node("HBox/Label")
 	var checkbox = panel.get_node("HBox/CheckBox")
 
-	# Zobrazený je len práve aktívny, nedokončený quest (sekvenčné questy).
-	panel.visible = quest.active and not quest.completed
+	# Zobrazíme sprístupnené, nedokončené questy. Čakajúce questy sú sivé,
+	# ale progres sa im stále počíta až po aktivácii v GameManageri.
+	panel.visible = quest.available and not quest.completed
 
 	label.text = "%s: %d/%d" % [quest.description, quest.current, quest.target]
 	checkbox.button_pressed = quest.completed
 	
 	# Farebná indikácia stavu
-	var status_color = Color.GREEN if quest.completed else Color.WHITE
+	var status_color = Color.GREEN if quest.completed else (Color.WHITE if quest.active else Color.GRAY)
 	label.add_theme_color_override("font_color", status_color)
 
 # --- DYNAMICKÉ VYTVÁRANIE PRVKOV ---

@@ -14,7 +14,7 @@ const COIN := preload("res://scenes/items/coin.tscn")
 @onready var prompt: Label = $Label
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
 
-# Questy pridávame až po prvom rozhovore; mincu (odmenu) dáme len raz.
+# Questy sprístupníme až po prvom rozhovore; mincu (odmenu) dáme len raz.
 var quests_given := false
 var coin_dropped := false
 
@@ -56,11 +56,11 @@ func interact() -> void:
 	box.show_pages(dialogue)
 
 func _on_chat_closed() -> void:
-	# Po prvom rozhovore zadáme úlohy: najprv zabi žaby, potom vezmi odmenu.
+	# Po prvom rozhovore sa sprístupní úloha s včelou a následná odmena.
 	if not quests_given:
 		quests_given = true
-		GameManager.add_quest("enemy_kill", 1, "Defeat the dangerous bee")
-		GameManager.add_quest("coins", 1, "Take the reward")
+		GameManager.set_quest_available("enemy_kill", true, "bee")
+		GameManager.set_quest_available("coins", true)
 
 	if not anim:
 		return
@@ -69,12 +69,11 @@ func _on_chat_closed() -> void:
 	await anim.animation_finished
 	anim.play("idle")
 
-## Reaguje na dokončenie ktoréhokoľvek questu. Keď sú žaby zabité,
-## stranger vyhodí odmenu (mincu) vedľa seba — to je druhý quest.
+## Reaguje na dokončenie questu s včelou. Potom Jawy vyhodí odmenu vedľa seba.
 func _on_quest_completed(quest) -> void:
 	if coin_dropped:
 		return
-	if quest.type == "enemy_kill":
+	if quest.type == "enemy_kill" and quest.enemy_type == "bee":
 		coin_dropped = true
 		_spawn_reward_coin()
 

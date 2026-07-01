@@ -101,7 +101,7 @@ func die():
 	if is_dead:
 		return
 	is_dead = true
-	GameManager.notify_enemy_killed()
+	GameManager.notify_enemy_killed("frog")
 	# Počká na dohratie animácie zásahu (a zvuku), až potom žaba zmizne.
 	if anim and anim.is_playing():
 		await anim.animation_finished

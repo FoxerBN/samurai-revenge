@@ -21,36 +21,42 @@ func reset_game():
 	coins = 0
 	active_quests = []
 
-func add_quest(type: String, target: int, description: String):
+func add_quest(type: String, target: int, description: String, enemy_type: String = "", available: bool = true):
 	""" Pridá nový quest do zoznamu úloh.
 	Hlavné questy sa spúšťajú postupne – naraz je aktívny vždy len jeden,
 	ďalší sa aktivuje až po dokončení predchádzajúceho. Quest "dôjdi do
 	portálu" je aktívny hneď (pridáva sa, až keď sú hlavné questy hotové). """
 	var quest = {
 		"type": type,
+		"enemy_type": enemy_type,
 		"target": target,
 		"current": 0,
 		"description": description,
 		"completed": false,
-		"active": type == "reach_portal"
+		"active": type == "reach_portal" and available,
+		"available": available
 	}
 	active_quests.append(quest)
 	if quest.active:
 		quest_updated.emit(active_quests.size() - 1)
-	else:
+	elif quest.available:
+		quest_updated.emit(active_quests.size() - 1)
 		_activate_next_quest()
 
-func notify_enemy_killed():
+func notify_enemy_killed(enemy_type: String = ""):
 	""" Pomocná funkcia pre questy na zabíjanie nepriateľov. """
-	_update_quest_progress("enemy_kill", 1, true)
+	_update_quest_progress("enemy_kill", 1, true, enemy_type)
 
-func _update_quest_progress(type: String, value: int, is_increment: bool = false):
+func _update_quest_progress(type: String, value: int, is_increment: bool = false, enemy_type: String = ""):
 	""" Interná funkcia na kontrolu a aktualizáciu progresu v questoch. """
 	for i in range(active_quests.size()):
 		var q = active_quests[i]
 		# Aktualizujeme len aktívny quest – čakajúce questy sa nepočítajú,
 		# kým na ne nepríde rad.
-		if q.type == type and not q.completed:
+		if q.type == type and q.active and not q.completed:
+			if type == "enemy_kill" and q.enemy_type != "" and q.enemy_type != enemy_type:
+				continue
+
 			if is_increment:
 				q.current += value
 			else:
@@ -80,6 +86,20 @@ func _all_objectives_completed() -> bool:
 func notify_sword_swing():
 	_update_quest_progress("sword_swing", 1, true)
 
+func set_quest_available(type: String, available: bool, enemy_type: String = "") -> void:
+	""" Sprístupní quest, ktorý už existuje, ale zatiaľ nemal byť v zozname. """
+	for i in range(active_quests.size()):
+		var q = active_quests[i]
+		if q.type != type or q.completed:
+			continue
+		if type == "enemy_kill" and q.enemy_type != enemy_type:
+			continue
+		q.available = available
+		if not available:
+			q.active = false
+		quest_updated.emit(i)
+	_activate_next_quest()
+
 func _activate_next_quest() -> void:
 	""" Aktivuje ďalší čakajúci hlavný quest, ak práve žiadny nebeží. """
 	for q in active_quests:
@@ -87,7 +107,7 @@ func _activate_next_quest() -> void:
 			return  # nejaký hlavný quest ešte beží, čakáme
 	for i in range(active_quests.size()):
 		var q = active_quests[i]
-		if q.type != "reach_portal" and not q.active and not q.completed:
+		if q.type != "reach_portal" and q.available and not q.active and not q.completed:
 			q.active = true
 			quest_updated.emit(i)
 			return

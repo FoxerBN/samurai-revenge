@@ -143,7 +143,7 @@ func die() -> void:
 	if is_dead:
 		return
 	is_dead = true
-	GameManager.notify_enemy_killed()
+	GameManager.notify_enemy_killed("bee")
 	queue_free()
 
 func _on_animated_sprite_2d_animation_finished() -> void:
